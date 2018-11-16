@@ -44,6 +44,13 @@ in
       description = "The domains that this mail server serves.";
     };
 
+    certificateDomains = mkOption {
+      type = types.listOf types.str;
+      example = [ "imap.example.com" "pop3.example.com" ];
+      default = [];
+      description = "Secondary domains and subdomains for which it is necessary to generate a certificate.";
+    };
+
     messageSizeLimit = mkOption {
       type = types.int;
       example = 52428800;

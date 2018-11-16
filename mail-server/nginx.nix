@@ -29,6 +29,7 @@ in
       enable = true;
       virtualHosts."${cfg.fqdn}" = {
         serverName = cfg.fqdn;
+        serverAliases = cfg.certificateDomains;
         forceSSL = true;
         enableACME = true;
         acmeRoot = acmeRoot;

@@ -595,6 +595,15 @@ certificate is valid for 10 years.
 - Default: ``/var/certs``
 
 
+mailserver.certificateDomains
+-----------------------------
+
+Secondary domains and subdomains for which it is necessary to generate a certificate.
+
+- Type: ``list of strings``
+- Default: ``[]``
+
+
 mailserver.certificateFile
 --------------------------
 
