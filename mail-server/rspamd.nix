@@ -52,6 +52,10 @@ in
                 scan_mime_parts = false; # scan mail as a whole unit, not parts. seems to be needed to work at all
               }
           ''; };
+          "dkim_signing.conf" = { text = ''
+              # Disable outbound email signing, we use opendkim for this
+              enabled = false;
+          ''; };
       };
 
       overrides = {
