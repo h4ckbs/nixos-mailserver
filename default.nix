@@ -187,6 +187,86 @@ in
       default = {};
     };
 
+
+    fullTextSearch = {
+      enable = mkEnableOption "Full text search indexing with xapian. This has significant performance and disk space cost.";
+      indexDir = mkOption {
+        type = types.nullOr types.str;
+        default = "/var/lib/dovecot/fts_xapian";
+        description = ''
+          Folder to store search indices. If null, indices are stored along with email, which
+          is not necessarily desirable as indices are voluminous and do not need to be backed up.
+        '';
+      };
+      autoIndex = mkOption {
+        type = types.bool;
+        default = true;
+        description = "Enable automatic indexing of messages as they are received or modified.";
+      };
+      autoIndexExclude = mkOption {
+        type = types.listOf types.str;
+        default = [ ];
+        example = [ "\\Trash" "SomeFolder" "Other/*" ];
+        description = ''
+          Mailboxes to exclude from automatic indexing.
+        '';
+      };
+
+      indexAttachments = mkOption {
+        type = types.bool;
+        default = false;
+        description = "Also index text-only attachements. Binary attachements are never indexed.";
+      };
+
+      enforced = mkOption {
+        type = types.enum [ "yes" "no" "body" ];
+        default = "no";
+        description = ''
+          Fail searches when no index is available. If set to
+          <literal>body</literal>, then only body searches (as opposed to
+          header) are affected. If set to <literal>no<literal>, searches may
+          fall back to a very slow brute force search.
+        '';
+      };
+
+      minSize = mkOption {
+        type = types.int;
+        default = 2;
+        description = "Size of the smallest n-gram to index.";
+      };
+      maxSize = mkOption {
+        type = types.int;
+        default = 20;
+        description = "Size of the largest n-gram to index.";
+      };
+      memoryLimit = mkOption {
+        type = types.nullOr types.int;
+        default = null;
+        example = 2000;
+        description = "Memory limit for the indexer process, in MiB. If null, leaves the default (which is rather low), and if 0, no limit.";
+      };
+
+      maintenance = {
+        enable = mkOption {
+          type = types.bool;
+          default = true;
+          description = "Regularly optmize indices, as recommended by upstream.";
+        };
+
+        onCalendar = mkOption {
+          type = types.str;
+          default = "daily";
+          description = "When to run the maintenance job. See systemd.time(7) for more information about the format.";
+        };
+
+        randomizedDelaySec = mkOption {
+          type = types.int;
+          default = 1000;
+          description = "Run the maintenance job not exactly at the time specified with <literal>onCalendar</literal>, but plus or minus this many seconds.";
+        };
+      };
+    };
+
     lmtpSaveToDetailMailbox = mkOption {
       type = types.enum ["yes" "no"];
       default = "yes";

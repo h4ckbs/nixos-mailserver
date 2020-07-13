@@ -70,6 +70,13 @@ pkgs.nixosTest {
 
               enableImap = true;
               enableImapSsl = true;
+              fullTextSearch = {
+                enable = true;
+                autoIndex = true;
+                # special use depends on https://github.com/NixOS/nixpkgs/pull/93201
+                autoIndexExclude = [ (if (pkgs.lib.versionAtLeast pkgs.lib.version "21") then "\\Junk" else "Junk") ];
+                enforced = "yes";
+              };
             };
         };
       client = { nodes, config, pkgs, ... }: let
@@ -139,12 +146,32 @@ pkgs.nixosTest {
 
             imap.close()
         '';
+        search = pkgs.writeScriptBin "search" ''
+          #!${pkgs.python3.interpreter}
+          import imaplib
+          import sys
+
+          [_, mailbox, needle] = sys.argv
+
+          with imaplib.IMAP4_SSL('${serverIP}') as imap:
+            imap.login('user1@example.com', 'user1')
+            imap.select(mailbox)
+            status, [response] = imap.search(None, 'BODY', repr(needle))
+            msg_ids = [ i for i in response.decode("utf-8").split(' ') if i ]
+            print(msg_ids)
+            assert status == 'OK'
+            assert len(msg_ids) == 1
+            status, response = imap.fetch(msg_ids[0], '(RFC822)')
+            assert status == "OK"
+            assert needle in repr(response)
+            imap.close()
+        '';
       in {
         imports = [
             ./lib/config.nix
         ];
         environment.systemPackages = with pkgs; [
-          fetchmail msmtp procmail findutils grep-ip check-mail-id test-imap-spam test-imap-ham
+          fetchmail msmtp procmail findutils grep-ip check-mail-id test-imap-spam test-imap-ham search
         ];
         environment.etc = {
           "root/.fetchmailrc" = {
@@ -275,6 +302,33 @@ pkgs.nixosTest {
             how are we doing today?
 
             XOXO User1
+          '';
+          "root/email6".text = ''
+            Message-ID: <123457qwerty@host.local.network>
+            From: User2 <user2@example.com>
+            To: User1 <user1@example.com>
+            Cc:
+            Bcc:
+            Subject: This is a test Email from user2 to user1
+            Reply-To:
+
+            Hello User1,
+
+            this email contains the needle:
+            576a4565b70f5a4c1a0925cabdb587a6 
+          '';
+          "root/email7".text = ''
+            Message-ID: <1234578qwerty@host.local.network>
+            From: User2 <user2@example.com>
+            To: User1 <user1@example.com>
+            Cc:
+            Bcc:
+            Subject: This is a test Email from user2 to user1
+            Reply-To:
+
+            Hello User1,
+
+            this email does not contain the needle :(
           '';
         };
       };
@@ -416,10 +470,37 @@ pkgs.nixosTest {
           client.succeed("imap-mark-ham >&2")
           server.wait_until_succeeds("journalctl -u dovecot2 | grep -i sa-learn-ham.sh >&2")
 
+      with subtest("full text search and indexation"):
+          # send 2 email from user2 to user1
+          client.succeed(
+              "msmtp -a test --tls=on --tls-certcheck=off --auth=on user1\@example.com < /etc/root/email6 >&2"
+          )
+          client.succeed(
+              "msmtp -a test --tls=on --tls-certcheck=off --auth=on user1\@example.com < /etc/root/email7 >&2"
+          )
+          # give the mail server some time to process the mail
+          server.wait_until_fails('[ "$(postqueue -p)" != "Mail queue is empty" ]')
+
+          # should find exactly one email containing this
+          client.succeed("search INBOX 576a4565b70f5a4c1a0925cabdb587a6 >&2")
+          # should fail because this folder is not indexed
+          client.fail("search Junk a >&2")
+          # check that search really goes through the indexer
+          server.succeed(
+              "journalctl -u dovecot2 | grep -E 'indexer-worker.*Indexed . messages in INBOX' >&2"
+          )
+          # check that Junk is not indexed
+          server.fail(
+              "journalctl -u dovecot2 | grep -E 'indexer-worker.*Indexed . messages in Junk' >&2"
+          )
+
       with subtest("no warnings or errors"):
           server.fail("journalctl -u postfix | grep -i error >&2")
           server.fail("journalctl -u postfix | grep -i warning >&2")
           server.fail("journalctl -u dovecot2 | grep -i error >&2")
-          server.fail("journalctl -u dovecot2 | grep -i warning >&2")
+          # harmless ? https://dovecot.org/pipermail/dovecot/2020-August/119575.html
+          server.fail(
+              "journalctl -u dovecot2 |grep -v 'Expunged message reappeared, giving a new UID'| grep -i warning >&2"
+          )
     '';
 }

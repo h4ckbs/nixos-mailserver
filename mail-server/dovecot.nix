@@ -24,10 +24,17 @@ let
   passwdDir = "/run/dovecot2";
   passwdFile = "${passwdDir}/passwd";
 
+  bool2int = x: if x then "1" else "0";
+
   maildirLayoutAppendix = lib.optionalString cfg.useFsLayout ":LAYOUT=fs";
 
   # maildir in format "/${domain}/${user}"
-  dovecotMaildir = "maildir:${cfg.mailDirectory}/%d/%n${maildirLayoutAppendix}";
+  dovecotMaildir =
+    "maildir:${cfg.mailDirectory}/%d/%n${maildirLayoutAppendix}"
+    + (lib.optionalString
+        (cfg.fullTextSearch.enable && (cfg.fullTextSearch.indexDir != null))
+        ":INDEX=${cfg.fullTextSearch.indexDir}"
+      );
 
   postfixCfg = config.services.postfix;
   dovecot2Cfg = config.services.dovecot2;
@@ -94,7 +101,8 @@ in
       sslServerCert = certificatePath;
       sslServerKey = keyPath;
       enableLmtp = true;
-      modules = [ pkgs.dovecot_pigeonhole ];
+      modules = [ pkgs.dovecot_pigeonhole ] ++ (lib.optional cfg.fullTextSearch.enable pkgs.dovecot_fts_xapian );
+      mailPlugins.globally.enable = lib.optionals cfg.fullTextSearch.enable [ "fts" "fts_xapian" ];
       protocols = lib.optional cfg.enableManageSieve "sieve";
 
       sieveScripts = {
@@ -237,6 +245,26 @@ in
           sieve_global_extensions = +vnd.dovecot.pipe +vnd.dovecot.environment
         }
 
+        ${lib.optionalString (cfg.fullTextSearch.enable != null) ''
+        plugin {
+          plugin = fts fts_xapian
+          fts = xapian
+          fts_xapian = partial=${toString cfg.fullTextSearch.minSize} full=${toString cfg.fullTextSearch.maxSize} attachments=${bool2int cfg.fullTextSearch.indexAttachments} verbose=${bool2int cfg.debug}
+
+          fts_autoindex = ${if cfg.fullTextSearch.autoIndex then "yes" else "no"}
+
+          ${lib.strings.concatImapStringsSep "\n" (n: x: "fts_autoindex_exclude${if n==1 then "" else toString n} = ${x}") cfg.fullTextSearch.autoIndexExclude}
+
+          fts_enforced = ${cfg.fullTextSearch.enforced}
+        }
+
+        ${lib.optionalString (cfg.fullTextSearch.memoryLimit != null) ''
+        service indexer-worker {
+          vsz_limit = ${toString (cfg.fullTextSearch.memoryLimit*1024*1024)}
+        }
+        ''}
+        ''}
+
         lda_mailbox_autosubscribe = yes
         lda_mailbox_autocreate = yes
       '';
@@ -256,5 +284,29 @@ in
     };
 
     systemd.services.postfix.restartTriggers = [ genPasswdScript ];
+
+    systemd.services.dovecot-fts-xapian-optimize = lib.mkIf (cfg.fullTextSearch.enable && cfg.fullTextSearch.maintenance.enable) {
+      description = "Optimize dovecot indices for fts_xapian";
+      requisite = [ "dovecot2.service" ];
+      after = [ "dovecot2.service" ];
+      startAt = cfg.fullTextSearch.maintenance.onCalendar;
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = "${pkgs.dovecot}/bin/doveadm fts optimize -A";
+        PrivateDevices = true;
+        PrivateNetwork = true;
+        ProtectKernelTunables = true;
+        ProtectKernelModules = true;
+        ProtectControlGroups = true;
+        ProtectHome = true;
+        ProtectSystem = true;
+        PrivateTmp = true;
+      };
+    };
+    systemd.timers.dovecot-fts-xapian-optimize = lib.mkIf (cfg.fullTextSearch.enable && cfg.fullTextSearch.maintenance.enable && cfg.fullTextSearch.maintenance.randomizedDelaySec != 0) {
+      timerConfig = {
+        RandomizedDelaySec = cfg.fullTextSearch.maintenance.randomizedDelaySec;
+      };
+    };
   };
 }

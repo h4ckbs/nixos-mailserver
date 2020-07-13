@@ -56,12 +56,19 @@ in
     systemd.services.dovecot2 = {
       wants = certificatesDeps;
       after = certificatesDeps;
-      preStart = ''
+      preStart = let
+        directories = lib.strings.escapeShellArgs (
+          [ mailDirectory ]
+          ++ lib.optional
+            (cfg.fullTextSearch.enable && (cfg.fullTextSearch.indexDir != null))
+            cfg.fullTextSearch.indexDir
+        );
+      in ''
         # Create mail directory and set permissions. See
         # <http://wiki2.dovecot.org/SharedMailboxes/Permissions>.
-        mkdir -p "${mailDirectory}"
-        chgrp "${vmailGroupName}" "${mailDirectory}"
-        chmod 02770 "${mailDirectory}"
+        mkdir -p ${directories}
+        chgrp "${vmailGroupName}" ${directories}
+        chmod 02770 ${directories}
       '';
     };
 
