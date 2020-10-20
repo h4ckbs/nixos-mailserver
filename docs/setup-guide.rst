@@ -118,6 +118,11 @@ test if your setting is correct by
 ::
 
    ping <server-FQDN>
+
+Expected output:
+
+::
+
    64 bytes from <server-FQDN> (<server-IP>): icmp_seq=1 ttl=46 time=21.3 ms
    ...
 
@@ -135,7 +140,12 @@ You can test if your setting is correct by
 ::
 
    host <server-IP>
-   <server-IP>.in-addr.arpa domain name pointer <server-FQDN>.
+
+Expected output:
+
+::
+
+   <server-IP-octets-reversed>.in-addr.arpa domain name pointer <server-FQDN>.
 
 Note that it can take a while until a DNS entry is propagated.
 
@@ -156,6 +166,10 @@ You can test this via
 ::
 
    dig -t MX <domain>
+
+Expected output:
+
+::
 
    ...
    ;; ANSWER SECTION:
