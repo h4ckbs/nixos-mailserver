@@ -74,34 +74,35 @@ See the [mailing list archive](https://www.freelists.org/archive/snm/)
 ### Quick Start
 
 ```nix
-{ config, pkgs, ... }:
-{
-  imports = [
-    (builtins.fetchTarball {
-      # Pick a commit from the branch you are interested in
-      url = "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver/-/archive/A-COMMIT-ID/nixos-mailserver-A-COMMIT-ID.tar.gz";
-      # And set its hash
-      sha256 = "0000000000000000000000000000000000000000000000000000";
-    })
-  ];
+   { config, pkgs, ... }:
+   let release = "nixos-20.09";
+   in {
+     imports = [
+       (builtins.fetchTarball {
+         url = "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver/-/archive/${release}/nixos-mailserver-${release}.tar.gz";
+         # This hash needs to be updated
+         sha256 = "0000000000000000000000000000000000000000000000000000";
+       })
+     ];
 
-  mailserver = {
-    enable = true;
-    fqdn = "mail.example.com";
-    domains = [ "example.com" "example2.com" ];
-    loginAccounts = {
-        "user1@example.com" = {
-            hashedPassword = "$6$/z4n8AQl6K$kiOkBTWlZfBd7PvF5GsJ8PmPgdZsFGN1jPGZufxxr60PoR0oUsrvzm2oQiflyz5ir9fFJ.d/zKm/NgLXNUsNX/";
+     mailserver = {
+       enable = true;
+       fqdn = "mail.example.com";
+       domains = [ "example.com" "example2.com" ];
+       loginAccounts = {
+           "user1@example.com" = {
+               # mkpasswd -m sha-512 "super secret password" > /hashed/password/file/location
+               hashedPasswordFile = "/hashed/password/file/location";
 
-            aliases = [
-                "info@example.com"
-                "postmaster@example.com"
-                "postmaster@example2.com"
-            ];
-        };
-    };
-  };
-}
+               aliases = [
+                   "info@example.com"
+                   "postmaster@example.com"
+                   "postmaster@example2.com"
+               ];
+           };
+       };
+     };
+   }
 ```
 
 For a complete list of options, see `default.nix`.

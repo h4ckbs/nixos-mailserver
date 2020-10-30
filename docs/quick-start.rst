@@ -4,14 +4,15 @@ Quick Start
 .. code:: nix
 
    { config, pkgs, ... }:
-   {
+   let release = "nixos-20.09";
+   in {
      imports = [
        (builtins.fetchTarball {
-         url = "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver/-/archive/v2.2.1/nixos-mailserver-v2.2.1.tar.gz";
-         sha256 = "03d49v8qnid9g9rha0wg2z6vic06mhp0b049s3whccn1axvs2zzx";
+         url = "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver/-/archive/${release}/nixos-mailserver-${release}.tar.gz";
+         # This hash needs to be updated
+         sha256 = "0000000000000000000000000000000000000000000000000000";
        })
      ];
-
 
      mailserver = {
        enable = true;
@@ -19,7 +20,8 @@ Quick Start
        domains = [ "example.com" "example2.com" ];
        loginAccounts = {
            "user1@example.com" = {
-               hashedPassword = "$6$/z4n8AQl6K$kiOkBTWlZfBd7PvF5GsJ8PmPgdZsFGN1jPGZufxxr60PoR0oUsrvzm2oQiflyz5ir9fFJ.d/zKm/NgLXNUsNX/";
+               # mkpasswd -m sha-512 "super secret password" > /hashed/password/file/location
+               hashedPasswordFile = "/hashed/password/file/location";
 
                aliases = [
                    "info@example.com"
