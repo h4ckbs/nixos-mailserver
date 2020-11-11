@@ -21,14 +21,10 @@ pkgs.nixosTest {
   nodes = {
     server = { config, pkgs, lib, ... }:
       let
-        clamav-db-files = pkgs.stdenv.mkDerivation rec {
-          name = "clamav-db-files";
-          src = lib.cleanSource ./clamav;
-          dontUnpack = true;
-          installPhase = ''
-            mkdir $out
-            cp -R $src/*.cvd $out/
-          '';
+        sources = import ../nix/sources.nix;
+        blobs = pkgs.fetchzip {
+          url = sources.blobs.url;
+          sha256 = sources.blobs.sha256;
         };
       in
         {
@@ -58,9 +54,9 @@ pkgs.nixosTest {
               '';
 
               script = ''
-                cp ${clamav-db-files}/main.cvd      /var/lib/clamav/
-                cp ${clamav-db-files}/daily.cvd     /var/lib/clamav/
-                cp ${clamav-db-files}/bytecode.cvd  /var/lib/clamav/
+                cp ${blobs}/clamav/main.cvd      /var/lib/clamav/
+                cp ${blobs}/clamav/daily.cvd     /var/lib/clamav/
+                cp ${blobs}/clamav/bytecode.cvd  /var/lib/clamav/
                 chown clamav:clamav /var/lib/clamav/*
               '';
 

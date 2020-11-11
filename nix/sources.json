@@ -1,4 +1,11 @@
 {
+    "blobs": {
+        "sha256": "1g687x3b2r4ar5i4xyav5qzpy9fp1phx9wf70f4j3scwny0g7hn1",
+        "type": "tarball",
+        "url": "https://gitlab.com/simple-nixos-mailserver/blobs/-/archive/2cccdf1ca48316f2cfd1c9a0017e8de5a7156265/blobs-2cccdf1ca48316f2cfd1c9a0017e8de5a7156265.tar.gz",
+        "url_template": "https://gitlab.com/simple-nixos-mailserver/blobs/-/archive/<version>/blobs-<version>.tar.gz",
+        "version": "2cccdf1ca48316f2cfd1c9a0017e8de5a7156265"
+    },
     "nixpkgs-20.09": {
         "branch": "release-20.09",
         "description": "A read-only mirror of NixOS/nixpkgs tracking the released channels. Send issues and PRs to",
