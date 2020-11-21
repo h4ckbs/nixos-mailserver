@@ -452,6 +452,14 @@ in
       '';
     };
 
+    sieveDirectory = mkOption {
+      type = types.path;
+      default = "/var/sieve";
+      description = ''
+        Where to store the sieve scripts.
+      '';
+    };
+
     virusScanning = mkOption {
       type = types.bool;
       default = false;

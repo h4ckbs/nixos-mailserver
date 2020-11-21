@@ -35,31 +35,31 @@ let
     set -euo pipefail
 
     # Create directory to store user sieve scripts if it doesn't exist
-    if (! test -d "/var/sieve"); then
-      mkdir "/var/sieve"
-      chown "${vmailUserName}:${vmailGroupName}" "/var/sieve"
-      chmod 770 "/var/sieve"
+    if (! test -d "${sieveDirectory}"); then
+      mkdir "${sieveDirectory}"
+      chown "${vmailUserName}:${vmailGroupName}" "${sieveDirectory}"
+      chmod 770 "${sieveDirectory}"
     fi
 
     # Copy user's sieve script to the correct location (if it exists).  If it
     # is null, remove the file.
     ${lib.concatMapStringsSep "\n" ({ name, sieveScript }:
       if lib.isString sieveScript then ''
-        if (! test -d "/var/sieve/${name}"); then
-          mkdir -p "/var/sieve/${name}"
-          chown "${vmailUserName}:${vmailGroupName}" "/var/sieve/${name}"
-          chmod 770 "/var/sieve/${name}"
+        if (! test -d "${sieveDirectory}/${name}"); then
+          mkdir -p "${sieveDirectory}/${name}"
+          chown "${vmailUserName}:${vmailGroupName}" "${sieveDirectory}/${name}"
+          chmod 770 "${sieveDirectory}/${name}"
         fi
-        cat << 'EOF' > "/var/sieve/${name}/default.sieve"
+        cat << 'EOF' > "${sieveDirectory}/${name}/default.sieve"
         ${sieveScript}
         EOF
-        chown "${vmailUserName}:${vmailGroupName}" "/var/sieve/${name}/default.sieve"
+        chown "${vmailUserName}:${vmailGroupName}" "${sieveDirectory}/${name}/default.sieve"
       '' else ''
-        if (test -f "/var/sieve/${name}/default.sieve"); then
-          rm "/var/sieve/${name}/default.sieve"
+        if (test -f "${sieveDirectory}/${name}/default.sieve"); then
+          rm "${sieveDirectory}/${name}/default.sieve"
         fi
-        if (test -f "/var/sieve/${name}.svbin"); then
-          rm "/var/sieve/${name}/default.svbin"
+        if (test -f "${sieveDirectory}/${name}.svbin"); then
+          rm "${sieveDirectory}/${name}/default.svbin"
         fi
       '') (map (user: { inherit (user) name sieveScript; })
             (lib.attrValues loginAccounts))}
