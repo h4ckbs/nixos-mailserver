@@ -46,7 +46,7 @@ should be the most common ones.
        domains = [ <domains> ];
 
        # A list of all login accounts. To create the password hashes, use
-       # mkpasswd -m sha-512 "super secret password"
+       # nix run nixpkgs.apacheHttpd -c htpasswd -nbB "" "super secret password" | cut -d: -f2
        loginAccounts = {
            "user1@example.com" = {
                hashedPassword = "$6$/z4n8AQl6K$kiOkBTWlZfBd7PvF5GsJ8PmPgdZsFGN1jPGZufxxr60PoR0oUsrvzm2oQiflyz5ir9fFJ.d/zKm/NgLXNUsNX/";

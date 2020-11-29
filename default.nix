@@ -59,10 +59,10 @@ in
             default = null;
             example = "$6$evQJs5CFQyPAW09S$Cn99Y8.QjZ2IBnSu4qf1vBxDRWkaIZWOtmu1Ddsm3.H3CFpeVc0JU4llIq8HQXgeatvYhh5O33eWG3TSpjzu6/";
             description = ''
-              The user's hashed password. Use `mkpasswd` as follows
+              The user's hashed password. Use `htpasswd` as follows
 
               ```
-              mkpasswd -m sha-512 "super secret password"
+              nix run nixpkgs.apacheHttpd -c htpasswd -nbB "" "super secret password" | cut -d: -f2
               ```
 
               Warning: this is stored in plaintext in the Nix store!
@@ -75,10 +75,10 @@ in
             default = null;
             example = "/run/keys/user1-passwordhash";
             description = ''
-              A file containing the user's hashed password. Use `mkpasswd` as follows
+              A file containing the user's hashed password. Use `htpasswd` as follows
 
               ```
-              mkpasswd -m sha-512 "super secret password"
+              nix run nixpkgs.apacheHttpd -c htpasswd -nbB "" "super secret password" | cut -d: -f2
               ```
             '';
           };
@@ -171,11 +171,11 @@ in
       };
       description = ''
         The login account of the domain. Every account is mapped to a unix user,
-        e.g. `user1@example.com`. To generate the passwords use `mkpasswd` as
+        e.g. `user1@example.com`. To generate the passwords use `htpasswd` as
         follows
 
         ```
-        mkpasswd -m sha-512 "super secret password"
+        nix run nixpkgs.apacheHttpd -c htpasswd -nbB "" "super secret password" | cut -d: -f2
         ```
       '';
       default = {};

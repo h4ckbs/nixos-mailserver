@@ -20,7 +20,7 @@ Quick Start
        domains = [ "example.com" "example2.com" ];
        loginAccounts = {
            "user1@example.com" = {
-               # mkpasswd -m sha-512 "super secret password" > /hashed/password/file/location
+               # nix run nixpkgs.apacheHttpd -c htpasswd -nbB "" "super secret password" | cut -d: -f2 > /hashed/password/file/location
                hashedPasswordFile = "/hashed/password/file/location";
 
                aliases = [

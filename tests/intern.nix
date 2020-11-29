@@ -29,8 +29,8 @@ let
 
   hashPassword = password: pkgs.runCommand
     "password-${password}-hashed"
-    { buildInputs = [ pkgs.mkpasswd ]; } ''
-      mkpasswd -m sha-512 ${password} > $out
+    { buildInputs = [ pkgs.apacheHttpd ]; } ''
+      htpasswd -nbB "" "${password}" | cut -d: -f2 > $out
     '';
 
 in

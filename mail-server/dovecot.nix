@@ -70,7 +70,7 @@ let
 
     cat <<EOF > ${passwdFile}
     ${lib.concatStringsSep "\n" (lib.mapAttrsToList (name: value:
-      "${name}:${"$(cat ${passwordFiles."${name}"})"}:${builtins.toString cfg.vmailUID}:${builtins.toString cfg.vmailUID}::${cfg.mailDirectory}:/run/current-system/sw/bin/nologin:"
+      "${name}:${"$(head -n 1 ${passwordFiles."${name}"})"}:${builtins.toString cfg.vmailUID}:${builtins.toString cfg.vmailUID}::${cfg.mailDirectory}:/run/current-system/sw/bin/nologin:"
         + (if lib.isString value.quota
               then "userdb_quota_rule=*:storage=${value.quota}"
               else "")
