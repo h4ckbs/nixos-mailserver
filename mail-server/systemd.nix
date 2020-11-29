@@ -18,40 +18,32 @@
 
 let
   cfg = config.mailserver;
-  preliminarySelfsigned = config.security.acme.preliminarySelfsigned;
-  acmeWantsTarget = [ "acme-certificates.target" ]
-    ++ (lib.optional preliminarySelfsigned "acme-selfsigned-certificates.target");
-  acmeAfterTarget = if preliminarySelfsigned
-    then [ "acme-selfsigned-certificates.target" ]
-    else [ "acme-certificates.target" ];
+  certificatesDeps =
+    if cfg.certificateScheme == 1 then
+      []
+    else if cfg.certificateScheme == 2 then
+      [ "mailserver-selfsigned-certificate.service" ]
+    else
+      [ "acme-finished-${cfg.fqdn}.target" ];
 in
 {
   config = with cfg; lib.mkIf enable {
-    # Add target for when certificates are available
-    systemd.targets."mailserver-certificates" = {
-      wants = lib.mkIf (cfg.certificateScheme == 3) acmeWantsTarget;
-      after = lib.mkIf (cfg.certificateScheme == 3) acmeAfterTarget;
-    };
-
     # Create self signed certificate
     systemd.services.mailserver-selfsigned-certificate = lib.mkIf (cfg.certificateScheme == 2) {
-      wantedBy = [ "mailserver-certificates.target" ];
-      after    = [ "local-fs.target" ];
-      before   = [ "mailserver-certificates.target" ];
+      after = [ "local-fs.target" ];
       script = ''
         # Create certificates if they do not exist yet
         dir="${cfg.certificateDirectory}"
         fqdn="${cfg.fqdn}"
-        case $fqdn in /*) fqdn=$(cat "$fqdn");; esac
-        key="''${dir}/key-${cfg.fqdn}.pem";
-        cert="''${dir}/cert-${cfg.fqdn}.pem";
+        [[ $fqdn == /* ]] && fqdn=$(< "$fqdn")
+        key="$dir/key-${cfg.fqdn}.pem";
+        cert="$dir/cert-${cfg.fqdn}.pem";
 
-        if [ ! -f "''${key}" ] || [ ! -f "''${cert}" ]
-        then
+        if [[ ! -f $key || ! -f $cert ]]; then
             mkdir -p "${cfg.certificateDirectory}"
-            (umask 077; "${pkgs.openssl}/bin/openssl" genrsa -out "''${key}" 2048) &&
-                "${pkgs.openssl}/bin/openssl" req -new -key "''${key}" -x509 -subj "/CN=''${fqdn}" \
-                        -days 3650 -out "''${cert}"
+            (umask 077; "${pkgs.openssl}/bin/openssl" genrsa -out "$key" 2048) &&
+                "${pkgs.openssl}/bin/openssl" req -new -key "$key" -x509 -subj "/CN=$fqdn" \
+                        -days 3650 -out "$cert"
         fi
       '';
       serviceConfig = {
@@ -62,8 +54,8 @@ in
 
     # Create maildir folder before dovecot startup
     systemd.services.dovecot2 = {
-      after = [ "mailserver-certificates.target" ];
-      wants = [ "mailserver-certificates.target" ];
+      wants = certificatesDeps;
+      after = certificatesDeps;
       preStart = ''
         # Create mail directory and set permissions. See
         # <http://wiki2.dovecot.org/SharedMailboxes/Permissions>.
@@ -75,11 +67,12 @@ in
 
     # Postfix requires dovecot lmtp socket, dovecot auth socket and certificate to work
     systemd.services.postfix = {
-      after = [ "dovecot2.service" "mailserver-certificates.target" ]
-        ++ (lib.optional cfg.dkimSigning "opendkim.service");
-      wants = [ "mailserver-certificates.target" ];
+      wants = certificatesDeps;
+      after = [ "dovecot2.service" ]
+        ++ lib.optional cfg.dkimSigning "opendkim.service"
+        ++ certificatesDeps;
       requires = [ "dovecot2.service" ]
-        ++ (lib.optional cfg.dkimSigning "opendkim.service");
+        ++ lib.optional cfg.dkimSigning "opendkim.service";
     };
   };
 }

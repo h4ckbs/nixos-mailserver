@@ -385,7 +385,7 @@ in
       type = types.path;
       default = "/var/certs";
       description = ''
-        Sceme 2)
+        Scheme 2)
         This is the folder where the certificate will be created. The name is
         hardcoded to "cert-<domain>.pem" and "key-<domain>.pem" and the
         certificate is valid for 10 years.
