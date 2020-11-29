@@ -26,7 +26,7 @@ in
              else if cfg.certificateScheme == 2
                   then "${cfg.certificateDirectory}/cert-${cfg.fqdn}.pem"
                   else if cfg.certificateScheme == 3
-                       then "/var/lib/acme/${cfg.fqdn}/fullchain.pem"
+                       then "${config.security.acme.certs.${cfg.fqdn}.directory}/fullchain.pem"
                        else throw "Error: Certificate Scheme must be in { 1, 2, 3 }";
 
   # key :: PATH
@@ -35,7 +35,7 @@ in
         else if cfg.certificateScheme == 2
              then "${cfg.certificateDirectory}/key-${cfg.fqdn}.pem"
               else if cfg.certificateScheme == 3
-                   then "/var/lib/acme/${cfg.fqdn}/key.pem"
+                   then "${config.security.acme.certs.${cfg.fqdn}.directory}/key.pem"
                    else throw "Error: Certificate Scheme must be in { 1, 2, 3 }";
 
   passwordFiles = let
