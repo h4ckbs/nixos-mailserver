@@ -97,6 +97,34 @@ After a ``nixos-rebuild switch --upgrade`` your server should be good to
 go. If you want to use ``nixops`` to deploy the server, look in the
 subfolder ``nixops`` for some inspiration.
 
+If you're using `flakes <https://nixos.wiki/wiki/Flakes>`__, you can use
+the following minimal ``flake.nix`` as an example:
+
+.. code:: nix
+
+   {
+     description = "NixOS configuration";
+
+     inputs.simple-nixos-mailserver.url = "gitlab:simple-nixos-mailserver/nixos-mailserver";
+
+     outputs = { self, nixpkgs, simple-nixos-mailserver }: {
+       nixosConfigurations = {
+         hostname = nixpkgs.lib.nixosSystem {
+           system = "x86_64-linux";
+           modules = [
+             simple-nixos-mailserver.nixosModule
+             {
+               mailserver = {
+                 enable = true;
+                 # ...
+               };
+             }
+           ];
+         };
+       };
+     };
+   }
+
 B) Setup everything else
 ~~~~~~~~~~~~~~~~~~~~~~~~
 

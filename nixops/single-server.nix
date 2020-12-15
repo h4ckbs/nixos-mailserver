@@ -5,7 +5,7 @@
     { config, pkgs, ... }:
     {
         imports = [
-            ./../default.nix
+            ../default.nix
         ];
 
         mailserver = {
