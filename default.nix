@@ -894,6 +894,7 @@ in
 
   imports = [
     ./mail-server/borgbackup.nix
+    ./mail-server/debug.nix
     ./mail-server/rsnapshot.nix
     ./mail-server/clamav.nix
     ./mail-server/monit.nix

@@ -114,11 +114,7 @@ let
    (lib.optional cfg.dkimSigning "unix:/run/opendkim/opendkim.sock")
    ++ [ "unix:/run/rspamd/rspamd-milter.sock" ];
 
-  policyd-spf = pkgs.writeText "policyd-spf.conf" (
-    cfg.policydSPFExtraConfig
-    + (lib.optionalString cfg.debug ''
-    debugLevel = 4
-  ''));
+  policyd-spf = pkgs.writeText "policyd-spf.conf" cfg.policydSPFExtraConfig;
 
   mappedFile = name: "hash:/var/lib/postfix/conf/${name}";
 
