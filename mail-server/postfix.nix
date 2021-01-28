@@ -22,25 +22,48 @@ let
   inherit (lib.strings) concatStringsSep;
   cfg = config.mailserver;
 
-  # valiases_postfix :: [ String ]
-  valiases_postfix = lib.flatten (lib.mapAttrsToList
+  # Merge several lookup tables. A lookup table is a attribute set where
+  # - the key is an address (user@example.com) or a domain (@example.com)
+  # - the value is a list of addresses
+  mergeLookupTables = tables: lib.zipAttrsWith (n: v: lib.flatten v) tables;
+
+  # valiases_postfix :: Map String [String]
+  valiases_postfix = mergeLookupTables (lib.flatten (lib.mapAttrsToList
     (name: value:
       let to = name;
-          in map (from: "${from} ${to}") (value.aliases ++ lib.singleton name))
-    cfg.loginAccounts);
+      in map (from: {"${from}" = to;}) (value.aliases ++ lib.singleton name))
+    cfg.loginAccounts));
 
-  # catchAllPostfix :: [ String ]
-  catchAllPostfix = lib.flatten (lib.mapAttrsToList
+  # catchAllPostfix :: Map String [String]
+  catchAllPostfix =  mergeLookupTables (lib.flatten (lib.mapAttrsToList
     (name: value:
       let to = name;
-          in map (from: "@${from} ${to}") value.catchAll)
-    cfg.loginAccounts);
+      in map (from: {"@${from}" = to;}) value.catchAll)
+      cfg.loginAccounts));
 
-  # extra_valiases_postfix :: [ String ]
-  extra_valiases_postfix = attrsToAliasList cfg.extraVirtualAliases;
+  # all_valiases_postfix :: Map String [String]
+  all_valiases_postfix = mergeLookupTables [valiases_postfix extra_valiases_postfix];
 
-  # all_valiases_postfix :: [ String ]
-  all_valiases_postfix = valiases_postfix ++ extra_valiases_postfix;
+  # attrsToLookupTable :: Map String (Either String [ String ]) -> Map String [String]
+  attrsToLookupTable = aliases: let
+    lookupTables = lib.mapAttrsToList (from: to: {"${from}" = to;}) aliases;
+  in mergeLookupTables lookupTables;
+
+  # extra_valiases_postfix :: Map String [String]
+  extra_valiases_postfix = attrsToLookupTable cfg.extraVirtualAliases;
+
+  # forwards :: Map String [String]
+  forwards = attrsToLookupTable cfg.forwards;
+
+  # lookupTableToString :: Map String [String] -> String
+  lookupTableToString = attrs: let
+    valueToString = value: lib.concatStringsSep ", " value;
+  in lib.concatStringsSep "\n" (lib.mapAttrsToList (name: value: "${name} ${valueToString value}") attrs);
+
+  # valiases_file :: Path
+  valiases_file = let
+    content = lookupTableToString (mergeLookupTables [all_valiases_postfix catchAllPostfix]);
+  in builtins.toFile "valias" content;
 
   # denied_recipients_postfix :: [ String ]
   denied_recipients_postfix = (map
@@ -48,28 +71,11 @@ let
     (lib.filter (acct: acct.sendOnly) (lib.attrValues cfg.loginAccounts)));
   denied_recipients_file = builtins.toFile "denied_recipients" (lib.concatStringsSep "\n" denied_recipients_postfix);
 
-  # attrsToAliasList :: Map String (Either String [ String ]) -> [ String ]
-  attrsToAliasList = aliases:
-    let
-      toList = to: if builtins.isList to then to else [to];
-    in lib.mapAttrsToList
-         (from: to: "${from} " + (lib.concatStringsSep ", " (toList to)))
-         aliases;
-
-  # forwards :: [ String ]
-  forwards = attrsToAliasList cfg.forwards;
-
-  # valiases_file :: Path
-  valiases_file = builtins.toFile "valias"
-                      (lib.concatStringsSep "\n" (all_valiases_postfix ++
-                                                  catchAllPostfix));
-
   reject_senders_postfix = (map
     (sender:
       "${sender} REJECT")
     (cfg.rejectSender));
   reject_senders_file = builtins.toFile "reject_senders" (lib.concatStringsSep "\n" (reject_senders_postfix))  ;
-
 
   reject_recipients_postfix = (map
     (recipient:
@@ -87,7 +93,7 @@ let
   # for details on how this file looks. By using the same file as valiases,
   # every alias is owned (uniquely) by its user.
   # The user's own address is already in all_valiases_postfix.
-  vaccounts_file = builtins.toFile "vaccounts" (lib.concatStringsSep "\n" all_valiases_postfix);
+  vaccounts_file = builtins.toFile "vaccounts" (lookupTableToString all_valiases_postfix);
 
   submissionHeaderCleanupRules = pkgs.writeText "submission_header_cleanup_rules" (''
      # Removes sensitive headers from mails handed in via the submission port.
@@ -149,8 +155,7 @@ in
       sslKey = keyPath;
       enableSubmission = cfg.enableSubmission;
       enableSubmissions = cfg.enableSubmissionSsl;
-      virtual =
-        (lib.concatStringsSep "\n" (all_valiases_postfix ++ catchAllPostfix ++ forwards));
+      virtual = lookupTableToString (mergeLookupTables [all_valiases_postfix catchAllPostfix forwards]);
 
       config = {
         # Extra Config

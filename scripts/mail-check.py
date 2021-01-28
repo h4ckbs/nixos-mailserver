@@ -24,28 +24,36 @@ def _send_mail(smtp_host, smtp_port, from_addr, from_pwd, to_addr, subject, star
 
     retry = RETRY
     while True:
-        with smtplib.SMTP(smtp_host, port=smtp_port) as smtp:
-            if starttls:
-                smtp.starttls()
-            if from_pwd is not None:
-                smtp.login(from_addr, from_pwd)
-            try:
-                smtp.sendmail(from_addr, [to_addr], message)
-                return
-            except smtplib.SMTPResponseException as e:
-                # This is a service unavailable error
-                # In this situation, we want to retry.
-                if e.smtp_code == 451:
-                    if retry > 0:
-                        retry = retry - 1
-                        time.sleep(1)
-                        continue
+        try:
+            with smtplib.SMTP(smtp_host, port=smtp_port) as smtp:
+                try:
+                    if starttls:
+                        smtp.starttls()
+                    if from_pwd is not None:
+                        smtp.login(from_addr, from_pwd)
+
+                    smtp.sendmail(from_addr, [to_addr], message)
+                    return
+                except smtplib.SMTPResponseException as e:
+                    if e.smtp_code == 451:  # service unavailable error
+                        print(e)
+                    elif e.smtp_code == 454:  # smtplib.SMTPResponseException: (454, b'4.3.0 Try again later')
+                        print(e)
                     else:
-                        print("Error while sending mail: %s" % e)
-                        exit(5)
-            except Exception as e:
-                print("Error while sending mail: %s" % e)
-                exit(4)
+                        raise
+        except OSError as e:
+            if e.errno in [16, -2]:
+                print("OSError exception message: ", e)
+            else:
+                raise
+
+        if retry > 0:
+            retry = retry - 1
+            time.sleep(1)
+            print("Retrying")
+        else:
+            print("Retry attempts exhausted")
+            exit(5)
 
 def _read_mail(
         imap_host,

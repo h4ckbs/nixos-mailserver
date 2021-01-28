@@ -33,6 +33,8 @@ let
       htpasswd -nbB "" "${password}" | cut -d: -f2 > $out
     '';
 
+  hashedPasswordFile = hashPassword "my-password";
+  passwordFile = pkgs.writeText "password" "my-password";
 in
 pkgs.nixosTest {
   name = "intern";
@@ -45,19 +47,33 @@ pkgs.nixosTest {
 
       virtualisation.memorySize = 1024;
 
+      environment.systemPackages = [
+        (pkgs.writeScriptBin "mail-check" ''
+          ${pkgs.python3}/bin/python ${../scripts/mail-check.py} $@
+        '')];
+
       mailserver = {
         enable = true;
         fqdn = "mail.example.com";
         domains = [ "example.com" ];
+        localDnsResolver = false;
 
         loginAccounts = {
           "user1@example.com" = {
-            hashedPassword = "$6$/z4n8AQl6K$kiOkBTWlZfBd7PvF5GsJ8PmPgdZsFGN1jPGZufxxr60PoR0oUsrvzm2oQiflyz5ir9fFJ.d/zKm/NgLXNUsNX/";
+            hashedPasswordFile = hashedPasswordFile;
+          };
+          "user2@example.com" = {
+            hashedPasswordFile = hashedPasswordFile;
           };
           "send-only@example.com" = {
             hashedPasswordFile = hashPassword "send-only";
             sendOnly = true;
           };
+        };
+        forwards = {
+          # user2@example.com is a local account and its mails are
+          # also forwarded to user1@example.com
+          "user2@example.com" = "user1@example.com";
         };
 
         vmailGroupName = "vmail";
@@ -70,6 +86,45 @@ pkgs.nixosTest {
   testScript = ''
     machine.start()
     machine.wait_for_unit("multi-user.target")
+
+    # Regression test for https://gitlab.com/simple-nixos-mailserver/nixos-mailserver/-/issues/205
+    with subtest("mail forwarded can are locally kept"):
+        # A mail sent to user2@example.com is in the user1@example.com mailbox
+        machine.succeed(
+            " ".join(
+                [
+                    "mail-check send-and-read",
+                    "--smtp-port 587",
+                    "--smtp-starttls",
+                    "--smtp-host localhost",
+                    "--imap-host localhost",
+                    "--imap-username user1@example.com",
+                    "--from-addr user1@example.com",
+                    "--to-addr user2@example.com",
+                    "--src-password-file ${passwordFile}",
+                    "--dst-password-file ${passwordFile}",
+                    "--ignore-dkim-spf",
+                ]
+            )
+        )
+        # A mail sent to user2@example.com is in the user2@example.com mailbox
+        machine.succeed(
+            " ".join(
+                [
+                    "mail-check send-and-read",
+                    "--smtp-port 587",
+                    "--smtp-starttls",
+                    "--smtp-host localhost",
+                    "--imap-host localhost",
+                    "--imap-username user2@example.com",
+                    "--from-addr user1@example.com",
+                    "--to-addr user2@example.com",
+                    "--src-password-file ${passwordFile}",
+                    "--dst-password-file ${passwordFile}",
+                    "--ignore-dkim-spf",
+                ]
+            )
+        )
 
     with subtest("vmail gid is set correctly"):
         machine.succeed("getent group vmail | grep 5000")
