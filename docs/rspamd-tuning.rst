@@ -5,15 +5,15 @@ SNM comes with the `rspamd spam filtering system <https://rspamd.com/>`_
 enabled by default. Although its out-of-the-box performance is good, you
 can increase its efficiency by tuning its behaviour.
 
-A) Auto-learning
-~~~~~~~~~~~~~~~~
+Auto-learning
+~~~~~~~~~~~~~
 
 Moving spam email to the Junk folder (and false-positives out of it) will
 trigger an automatic training of the Bayesian filters, improving filtering
 of future emails.
 
-B) Train from existing folders
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Train from existing folders
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If you kept previous spam, you can train the filter from it. Note that the
 `rspamd FAQ <https://rspamd.com/doc/faq.html#how-can-i-learn-messages>`_
@@ -36,8 +36,8 @@ You can run the training in a root shell as follows:
   # Check that training was successful
   rspamc -h $RSOCK stat | grep learned
 
-C) Tune symbol weight
-~~~~~~~~~~~~~~~~~~~~~
+Tune symbol weight
+~~~~~~~~~~~~~~~~~~
 
 The ``X-Spamd-Result`` header is automatically added to your emails, detailing
 the scoring decisions. The `modules documentation <https://rspamd.com/doc/modules/>`_
@@ -52,8 +52,8 @@ details the meaning of each symbol. You can tune the weight if a symbol if neede
       }'';
   };
 
-D) Tune action thresholds
-~~~~~~~~~~~~~~~~~~~~~~~~~
+Tune action thresholds
+~~~~~~~~~~~~~~~~~~~~~~
 
 After scoring the message, rspamd decides on an action based on configurable thresholds.
 By default, rspamd will tell postfix to reject any message with a score higher than 15.
@@ -71,8 +71,8 @@ this behaviour by tuning the configuration. For example:
   '';
 
 
-E) Access the rspamd web UI
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Access the rspamd web UI
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 Rspamd comes with `a web interface <https://rspamd.com/webui/>`_ that displays statistics
 and history of past scans. **We do NOT recommend using it to change the configuration**
