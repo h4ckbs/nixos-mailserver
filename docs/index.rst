@@ -16,6 +16,7 @@ Welcome to NixOS Mailserver's documentation!
    quick-start
    setup-guide
    howto-develop
+   faq
    release-notes
 
 .. toctree::
