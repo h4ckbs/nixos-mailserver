@@ -16,10 +16,16 @@ Welcome to NixOS Mailserver's documentation!
    quick-start
    setup-guide
    howto-develop
-   backup-guide
-   howto-add-radicale
-   rspamd-tuning
    release-notes
+
+.. toctree::
+   :maxdepth: 1
+   :caption: How-to
+
+   backup-guide
+   add-radicale
+   rspamd-tuning
+
 
 Indices and tables
 ==================

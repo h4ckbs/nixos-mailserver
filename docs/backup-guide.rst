@@ -1,9 +1,9 @@
-A Complete Backup Guide
-=======================
+Backup Guide
+============
 
-This is really easy. First off you should have a backup of your
-``configuration.nix`` file where you have the server config (but that is
-already in a git repository right?)
+First off you should have a backup of your ``configuration.nix`` file
+where you have the server config (but that is already in a git
+repository right?)
 
 Next you need to backup ``/var/vmail`` or whatever you have specified
 for the option ``mailDirectory``. This is where all the mails reside.

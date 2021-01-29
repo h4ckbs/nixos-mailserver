@@ -1,5 +1,5 @@
-How to tune spam filtering
-==========================
+Tune spam filtering
+===================
 
 SNM comes with the `rspamd spam filtering system <https://rspamd.com/>`_
 enabled by default. Although its out-of-the-box performance is good, you

@@ -1,5 +1,5 @@
-How to Add Radicale to SNM
-==========================
+Add Radicale
+============
 
 Configuration by @dotlambda
 

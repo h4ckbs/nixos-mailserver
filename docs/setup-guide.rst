@@ -1,5 +1,5 @@
-A Complete Setup Guide
-======================
+Setup Guide
+===========
 
 Mail servers can be a tricky thing to set up. This guide is supposed to
 run you through the most important steps to achieve a 10/10 score on

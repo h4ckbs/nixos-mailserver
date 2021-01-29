@@ -1,5 +1,5 @@
-How to Develop SNM
-==================
+Contribute or troubleshoot
+==========================
 
 Run NixOS tests
 ---------------
