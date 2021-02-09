@@ -25,6 +25,12 @@ in
   options.mailserver = {
     enable = mkEnableOption "nixos-mailserver";
 
+    openFirewall = mkOption {
+      type = types.bool;
+      default = true;
+      description = "Automatically open ports in the firewall.";
+    };
+
     fqdn = mkOption {
       type = types.str;
       example = "mx.example.com";

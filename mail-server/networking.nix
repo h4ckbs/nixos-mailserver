@@ -20,7 +20,7 @@ let
   cfg = config.mailserver;
 in
 {
-  config = with cfg; lib.mkIf enable {
+  config = with cfg; lib.mkIf (enable && openFirewall) {
 
     networking.firewall = {
       allowedTCPPorts = [ 25 ]
