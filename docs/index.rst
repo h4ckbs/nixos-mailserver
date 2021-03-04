@@ -26,7 +26,7 @@ Welcome to NixOS Mailserver's documentation!
    backup-guide
    add-radicale
    rspamd-tuning
-
+   fts
 
 Indices and tables
 ==================
