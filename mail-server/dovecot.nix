@@ -33,7 +33,7 @@ let
     "maildir:${cfg.mailDirectory}/%d/%n${maildirLayoutAppendix}"
     + (lib.optionalString
         (cfg.fullTextSearch.enable && (cfg.fullTextSearch.indexDir != null))
-        ":INDEX=${cfg.fullTextSearch.indexDir}"
+        ":INDEX=${cfg.fullTextSearch.indexDir}/%d/%n"
       );
 
   postfixCfg = config.services.postfix;
