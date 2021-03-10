@@ -73,9 +73,10 @@ D9FE 4119 F082 6F15 93BD  BD36 6162 DBA5 635E A16A
   * DKIM Signing
     - [ ] Allow a per domain selector
 
-### Changelog and How to Stay Up-to-Date
+### Get in touch
 
-See the [mailing list archive](https://www.freelists.org/archive/snm/)
+- Subscribe to the [mailing list](https://www.freelists.org/archive/snm/)
+- Join the Freenode IRC channel `#nixos-mailserver`
 
 ### Quick Start
 
