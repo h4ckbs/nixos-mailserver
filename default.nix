@@ -187,17 +187,29 @@ in
       default = {};
     };
 
+    indexDir = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = ''
+        Folder to store search indices. If null, indices are stored
+        along with email, which could not necessarily be desirable,
+        especially when the fullTextSearch option is enable since
+        indices it creates are voluminous and do not need to be backed
+        up.
+
+        Be careful when changing this option value since all indices
+        would be recreated at the new location (and clients would need
+        to resynchronize).
+
+        Note the some variables can be used in the file path. See
+        https://doc.dovecot.org/configuration_manual/mail_location/#variables
+        for details.
+      '';
+      example = "/var/lib/docecot/indices/%d/%n";
+    };
 
     fullTextSearch = {
       enable = mkEnableOption "Full text search indexing with xapian. This has significant performance and disk space cost.";
-      indexDir = mkOption {
-        type = types.nullOr types.str;
-        default = "/var/lib/dovecot/fts_xapian";
-        description = ''
-          Folder to store search indices. If null, indices are stored along with email, which
-          is not necessarily desirable as indices are voluminous and do not need to be backed up.
-        '';
-      };
       autoIndex = mkOption {
         type = types.bool;
         default = true;

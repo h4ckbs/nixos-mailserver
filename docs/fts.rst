@@ -38,9 +38,17 @@ issues a search query, so latency will be high.
 Resource requirements
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Indices can take more disk space than the emails themselves. By default, they
-are kept in a different location (``/var/lib/dovecot/fts_xapian``) than emails
-so that you can backup emails without indices.
+Indices created by the full text search feature can take more disk
+space than the emails themselves. By default, they are kept in the
+emails location. When enabling the full text search feature, it is
+recommended to move indices in a different location, such as
+(``/var/lib/docecot/indices/%d/%n``) by using the option
+``mailserver.indexDir``.
+
+.. warning::
+
+   When the value of the ``indexDir`` option is changed, all dovecot
+   indices needs to be recreated: clients would need to resynchronize.
 
 Indexation itself is rather resouces intensive, in CPU, and for emails with
 large headers, in memory as well. Initial indexation of existing emails can take

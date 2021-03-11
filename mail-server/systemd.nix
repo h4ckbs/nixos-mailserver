@@ -59,9 +59,7 @@ in
       preStart = let
         directories = lib.strings.escapeShellArgs (
           [ mailDirectory ]
-          ++ lib.optional
-            (cfg.fullTextSearch.enable && (cfg.fullTextSearch.indexDir != null))
-            cfg.fullTextSearch.indexDir
+          ++ lib.optional (cfg.indexDir != null) cfg.indexDir
         );
       in ''
         # Create mail directory and set permissions. See

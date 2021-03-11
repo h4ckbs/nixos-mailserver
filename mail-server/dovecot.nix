@@ -31,9 +31,8 @@ let
   # maildir in format "/${domain}/${user}"
   dovecotMaildir =
     "maildir:${cfg.mailDirectory}/%d/%n${maildirLayoutAppendix}"
-    + (lib.optionalString
-        (cfg.fullTextSearch.enable && (cfg.fullTextSearch.indexDir != null))
-        ":INDEX=${cfg.fullTextSearch.indexDir}/%d/%n"
+    + (lib.optionalString (cfg.indexDir != null)
+       ":INDEX=${cfg.indexDir}/%d/%n"
       );
 
   postfixCfg = config.services.postfix;
