@@ -3,28 +3,53 @@ Setup Guide
 
 Mail servers can be a tricky thing to set up. This guide is supposed to
 run you through the most important steps to achieve a 10/10 score on
-``mail-tester.com``.
+`<https://mail-tester.com>`_.
 
-What you need:
+What you need is:
 
--  A server with a public IP (referred to as ``server-IP``)
--  A Fully Qualified Domain Name (``FQDN``) where your server is
-   reachable, so that other servers can find yours. Common FQDN include
-   ``mx.example.com`` (where ``example.com`` is a domain you own) or
-   ``mail.example.com``. The domain is referred to as ``server-domain``
-   (``example.com`` in the above example) and the ``FQDN`` is referred
-   to by ``server-FQDN`` (``mx.example.com`` above).
--  A list of domains you want to your email server to serve. (Note that
-   this does not have to include ``server-domain``, but may of course).
-   These will be referred to as ``domains``. As an example,
-   ``domains = [ example1.com, example2.com ]``.
+- a server running NixOS with a public IP
+- a domain name.
 
-Setup server
-~~~~~~~~~~~~
+.. note::
+
+   In the following, we consider a server with the public IP ``1.2.3.4``
+   and the domain ``example.com``.
+
+First, we will set the minimum DNS configuration to be able to deploy
+an up and running mail server. Once the server is deployed, we could
+then set all DNS entries required to send and receive mails on this
+server.
+
+Setup DNS A record for server
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Add a DNS record to the domain ``example.com`` with the following
+entries
+
+==================== ===== ==== =============
+Name (Subdomain)     TTL   Type Value
+==================== ===== ==== =============
+``mail.example.com`` 10800 A    ``1.2.3.4``
+==================== ===== ==== =============
+
+You can check this with
+
+::
+
+   $ ping mail.example.com
+   64 bytes from mail.example.com (1.2.3.4): icmp_seq=1 ttl=46 time=21.3 ms
+   ...
+
+Note that it can take a while until a DNS entry is propagated. This
+DNS entry is required for the Let's Encrypt certificate generation
+(which is used in the below configuration example).
+
+Setup the server
+~~~~~~~~~~~~~~~~
 
 The following describes a server setup that is fairly complete. Even
-though there are more possible options (see ``default.nix``), these
-should be the most common ones.
+though there are more possible options (see the ``default.nix`` file),
+these should be the most common ones.
 
 .. code:: nix
 
@@ -39,235 +64,143 @@ should be the most common ones.
        })
      ];
 
-
      mailserver = {
        enable = true;
-       fqdn = <server-FQDN>;
-       domains = [ <domains> ];
+       fqdn = "mail.example.com";
+       domains = [ "example.com" ];
 
        # A list of all login accounts. To create the password hashes, use
        # nix run nixpkgs.apacheHttpd -c htpasswd -nbB "" "super secret password" | cut -d: -f2
        loginAccounts = {
            "user1@example.com" = {
-               hashedPassword = "$6$/z4n8AQl6K$kiOkBTWlZfBd7PvF5GsJ8PmPgdZsFGN1jPGZufxxr60PoR0oUsrvzm2oQiflyz5ir9fFJ.d/zKm/NgLXNUsNX/";
-
-               aliases = [
-                   "postmaster@example.com"
-                   "postmaster@example2.com"
-               ];
-
-               # Make this user the catchAll address for domains example.com and
-               # example2.com
-               catchAll = [
-                   "example.com"
-                   "example2.com"
-               ];
+               hashedPasswordFile = "/a/file/containing/a/hashed/password";
+               aliases = ["postmaster@example.com"];
            };
-
            "user2@example.com" = { ... };
-       };
-
-       # Extra virtual aliases. These are email addresses that are forwarded to
-       # loginAccounts addresses.
-       extraVirtualAliases = {
-           # address = forward address;
-           "abuse@example.com" = "user1@example.com";
        };
 
        # Use Let's Encrypt certificates. Note that this needs to set up a stripped
        # down nginx and opens port 80.
        certificateScheme = 3;
-
-       # Enable IMAP and POP3
-       enableImap = true;
-       enablePop3 = true;
-       enableImapSsl = true;
-       enablePop3Ssl = true;
-
-       # Enable the ManageSieve protocol
-       enableManageSieve = true;
-
-       # whether to scan inbound emails for viruses (note that this requires at least
-       # 1 Gb RAM for the server. Without virus scanning 256 MB RAM should be plenty)
-       virusScanning = false;
      };
    }
 
-After a ``nixos-rebuild switch --upgrade`` your server should be good to
-go. If you want to use ``nixops`` to deploy the server, look in the
-subfolder ``nixops`` for some inspiration.
+After a ``nixos-rebuild switch`` your server should be running all
+mail components.
 
-If you're using `flakes <https://nixos.wiki/wiki/Flakes>`__, you can use
-the following minimal ``flake.nix`` as an example:
+Setup all other DNS requirements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. code:: nix
-
-   {
-     description = "NixOS configuration";
-
-     inputs.simple-nixos-mailserver.url = "gitlab:simple-nixos-mailserver/nixos-mailserver";
-
-     outputs = { self, nixpkgs, simple-nixos-mailserver }: {
-       nixosConfigurations = {
-         hostname = nixpkgs.lib.nixosSystem {
-           system = "x86_64-linux";
-           modules = [
-             simple-nixos-mailserver.nixosModule
-             {
-               mailserver = {
-                 enable = true;
-                 # ...
-               };
-             }
-           ];
-         };
-       };
-     };
-   }
-
-Setup everything else
-~~~~~~~~~~~~~~~~~~~~~
-
-Step 1: Set DNS entry for server
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Add a DNS record to the domain ``server-domain`` with the following
-entries
-
-================ ===== ==== ======== =============
-Name (Subdomain) TTL   Type Priority Value
-================ ===== ==== ======== =============
-``server-FQDN``  10800 A             ``server-IP``
-================ ===== ==== ======== =============
-
-This resolves DNS queries for ``server-FQDN`` to ``server-IP``. You can
-test if your setting is correct by
-
-::
-
-   ping <server-FQDN>
-
-Expected output:
-
-::
-
-   64 bytes from <server-FQDN> (<server-IP>): icmp_seq=1 ttl=46 time=21.3 ms
-   ...
-
-Note that it can take a while until a DNS entry is propagated.
-
-Step 2: Set rDNS (reverse DNS) entry for server
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Set rDNS (reverse DNS) entry for server
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Wherever you have rented your server, you should be able to set reverse
-DNS entries for the IP’s you own. Add an entry resolving ``server-IP``
-to ``server-FQDN``
+DNS entries for the IP’s you own. Add an entry resolving ``1.2.3.4``
+to ``mail.example.com``
 
-You can test if your setting is correct by
-
-::
-
-   host <server-IP>
-
-Expected output:
+You can check this with
 
 ::
 
-   <server-IP-octets-reversed>.in-addr.arpa domain name pointer <server-FQDN>.
+   $ nix-shell -p bind --command "host 1.2.3.4"
+   4.3.2.1.in-addr.arpa domain name pointer mail.example.com.
 
 Note that it can take a while until a DNS entry is propagated.
 
-Step 3: Set ``MX`` Records
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+Set a ``MX`` record
+^^^^^^^^^^^^^^^^^^^
 
-For every ``domain`` in ``domains`` do: \* Add a ``MX`` record to the
-domain ``domain``
 
-::
+Add a ``MX`` record to the domain ``example.com``.
 
-   | Name (Subdomain) | TTL   | Type | Priority | Value             |
-   | ---------------- | ----- | ---- | -------- | ----------------- |
-   | `domain`         |       | MX   | 10       | `server-FQDN`     |
+================ ==== ======== =================
+Name (Subdomain) Type Priority Value
+================ ==== ======== =================
+example.com      MX   10       mail.example.com
+================ ==== ======== =================
 
-You can test this via
-
-::
-
-   dig -t MX <domain>
-
-Expected output:
+You can check this with
 
 ::
 
-   ...
-   ;; ANSWER SECTION:
-   <domain>    10800   IN  MX  10 <server-FQDN>
-   ...
+   $ nix-shell -p bind --command "host -t mx example.com"
+   example.com mail is handled by 10 mail.example.com.
 
 Note that it can take a while until a DNS entry is propagated.
 
-Step 4: Set ``SPF`` Records
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Set a ``SPF`` record
+^^^^^^^^^^^^^^^^^^^^
 
-For every ``domain`` in ``domains`` do: \* Add a ``SPF`` record to the
-domain ``domain``
+Add a `SPF <https://fr.wikipedia.org/wiki/Sender_Policy_Framework>`_
+record to the domain ``example.com``.
 
-::
+================ ===== ==== ================================
+Name (Subdomain) TTL   Type Value
+================ ===== ==== ================================
+example.com      10800 TXT  `v=spf1 a:mail.example.com -all`
+================ ===== ==== ================================
 
-   | Name (Subdomain) | TTL   | Type | Priority | Value                         |
-   | ---------------- | ----- | ---- | -------- | -----------------             |
-   | `domain`         | 10800 | TXT  |          | `v=spf1 ip4:<server-IP> -all` |
-
-You can check this with ``dig -t TXT <domain>`` similar to the last
-section. Note that ``SPF`` records are set as ``TXT`` records since
-RFC1035.
-
-Note that it can take a while until a DNS entry is propagated. If you
-want to use multiple servers for your email handling, don’t forget to
-add all server IP’s to this list.
-
-Step 5: Set ``DKIM`` signature
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-In this section we assume that your ``dkimSelector`` is set to ``mail``.
-If you have a different selector, replace all ``mail``\ ’s below
-accordingly.
-
-For every ``domain`` in ``domains`` do: \* Go to your server and
-navigate to the dkim key directory (by default ``/var/dkim``). There you
-will find a public key for any domain in the ``domain.txt`` file. It
-will look like
-``mail._domainkey IN TXT "v=DKIM1; r=postmaster; g=*; k=rsa; p=<really-long-key>" ; ----- DKIM mail for domain.tld``
-\* Add a ``DKIM`` record to the domain ``domain``
+You can check this with
 
 ::
 
-   | Name (Subdomain)         | TTL   | Type | Priority | Value                          |
-   | ----------------         | ----- | ---- | -------- | -----------------              |
-   | mail._domainkey.`domain` | 10800 | TXT  |          | `v=DKIM1; p=<really-long-key>` |
-
-You can check this with ``dig -t TXT mail._domainkey.<domain>`` similar
-to the last section.
+   $ nix-shell -p bind --command "host -t TXT example.com"
+   example.com descriptive text "v=spf1 a:mail.example.com -all"
 
 Note that it can take a while until a DNS entry is propagated.
 
-Step 6: Set ``DMARC`` record
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Set ``DKIM`` signature
+^^^^^^^^^^^^^^^^^^^^^^
 
-For every ``domain`` in ``domains`` do:
+On your server, the ``opendkim`` systemd service generated a file
+containing your DKIM public key in the file
+``/var/dkim/example.com.mail.txt``. The content of this file looks
+like
 
--  Add a ``DMARC`` record to the domain ``domain``
+::
 
-   ==================== ===== ==== ======== ====================
-   Name (Subdomain)     TTL   Type Priority Value
-   ==================== ===== ==== ======== ====================
-   \_dmarc.\ ``domain`` 10800 TXT           ``v=DMARC1; p=none``
-   ==================== ===== ==== ======== ====================
+   mail._domainkey IN TXT "v=DKIM1; k=rsa; s=email; p=<really-long-key>" ; ----- DKIM mail for domain.tld
 
-You can check this with ``dig -t TXT _dmarc.<domain>`` similar to the
-last section.
+where ``really-long-key`` is your public key.
+
+Based on the content of this file, we can add a ``DKIM`` record to the
+domain ``example.com``.
+
+=========================== ===== ==== ==============================
+Name (Subdomain)            TTL   Type Value
+=========================== ===== ==== ==============================
+mail._domainkey.example.com 10800 TXT  ``v=DKIM1; p=<really-long-key>``
+=========================== ===== ==== ==============================
+
+You can check this with
+
+::
+
+   $ nix-shell -p bind --command "host -t txt mail._domainkey.example.com"
+   mail._domainkey.example.com descriptive text "v=DKIM1;p=<really-long-key>"
 
 Note that it can take a while until a DNS entry is propagated.
+
+Set a ``DMARC`` record
+^^^^^^^^^^^^^^^^^^^^^^
+
+Add a ``DMARC`` record to the domain ``example.com``.
+
+======================== ===== ==== ====================
+Name (Subdomain)         TTL   Type Value
+======================== ===== ==== ====================
+_dmarc.example.com       10800 TXT  ``v=DMARC1; p=none``
+======================== ===== ==== ====================
+
+You can check this with
+
+::
+
+   $ nix-shell -p bind --command "host -t TXT _dmarc.example.com"
+   mail._domainkey.abesis.fr descriptive text "v=DKIM1;p=<really-long-key>"
+
+Note that it can take a while until a DNS entry is propagated.
+
 
 Test your Setup
 ~~~~~~~~~~~~~~~

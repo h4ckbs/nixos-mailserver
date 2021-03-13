@@ -13,7 +13,6 @@ Welcome to NixOS Mailserver's documentation!
 .. toctree::
    :maxdepth: 2
 
-   quick-start
    setup-guide
    howto-develop
    faq
@@ -27,6 +26,7 @@ Welcome to NixOS Mailserver's documentation!
    add-radicale
    rspamd-tuning
    fts
+   flakes
 
 Indices and tables
 ==================
