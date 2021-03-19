@@ -14,19 +14,29 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program. If not, see <http://www.gnu.org/licenses/>
 
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, options, ... }:
 
 let
   cfg = config.mailserver;
+  clamHasSettings = options.services.clamav.daemon ? settings;
 in
+with lib;
 {
   config = lib.mkIf (cfg.enable && cfg.virusScanning) {
-    services.clamav.daemon.enable = true;
-    services.clamav.updater.enable = true;
 
-    services.clamav.daemon.extraConfig = ''
-      PhishingScanURLs no
-    '';
+    # Remove extraConfig and settings conditional after 20.09 support is removed
+
+    services.clamav.daemon = {
+      enable = true;
+    } // (if clamHasSettings then {
+      settings.PhishingScanURLs = "no";
+    } else {
+      extraConfig = ''
+        PhishingScanURLs no
+      '';
+    });
+
+    services.clamav.updater.enable = true;
   };
 }
 
