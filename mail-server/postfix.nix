@@ -160,7 +160,7 @@ in
       config = {
         # Extra Config
         mydestination = "";
-        recipient_delimiter = "+";
+        recipient_delimiter = cfg.recipientDelimiter;
         smtpd_banner = "${fqdn} ESMTP NO UCE";
         disable_vrfy_command = true;
         message_size_limit = toString cfg.messageSizeLimit;

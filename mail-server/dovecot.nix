@@ -191,7 +191,7 @@ in
           }
         }
 
-        recipient_delimiter = +
+        recipient_delimiter = ${cfg.recipientDelimiter}
         lmtp_save_to_detail_mailbox = ${cfg.lmtpSaveToDetailMailbox}
 
         protocol lmtp {

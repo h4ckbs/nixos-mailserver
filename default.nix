@@ -620,6 +620,14 @@ in
       '';
     };
 
+    recipientDelimiter = mkOption {
+      type = types.str;
+      default = "+";
+      description = ''
+        Configure the recipient delimiter.
+      '';
+    };
+
     redis = {
       address = mkOption {
         type = types.str;
