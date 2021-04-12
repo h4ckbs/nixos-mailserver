@@ -197,7 +197,7 @@ You can check this with
 ::
 
    $ nix-shell -p bind --command "host -t TXT _dmarc.example.com"
-   mail._domainkey.abesis.fr descriptive text "v=DKIM1;p=<really-long-key>"
+   _dmarc.example.com descriptive text "v=DMARC1; p=none"
 
 Note that it can take a while until a DNS entry is propagated.
 
