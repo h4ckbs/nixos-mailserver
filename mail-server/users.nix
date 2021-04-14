@@ -21,7 +21,7 @@ with config.mailserver;
 let
   vmail_user = {
     name = vmailUserName;
-    isNormalUser = false;
+    isSystemUser = true;
     uid = vmailUID;
     home = mailDirectory;
     createHome = true;
