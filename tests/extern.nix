@@ -76,6 +76,8 @@ pkgs.nixosTest {
                 # special use depends on https://github.com/NixOS/nixpkgs/pull/93201
                 autoIndexExclude = [ (if (pkgs.lib.versionAtLeast pkgs.lib.version "21") then "\\Junk" else "Junk") ];
                 enforced = "yes";
+                # fts-xapian warns when memory is low, which makes the test fail
+                memoryLimit = 100000;
               };
             };
         };
