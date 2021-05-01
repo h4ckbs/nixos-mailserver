@@ -17,7 +17,7 @@
 { pkgs ? import <nixpkgs> {}}:
 
 pkgs.nixosTest {
-  name = "extern";
+  name = "external";
   nodes = {
     server = { config, pkgs, ... }:
         {

@@ -13,8 +13,8 @@ You can run the testsuite via
 
 ::
 
-   $ nix-build tests -A extern.nixpkgs_20_03
-   $ nix-build tests -A intern.nixpkgs_unstable
+   $ nix-build tests -A external.nixpkgs_20_03
+   $ nix-build tests -A internal.nixpkgs_unstable
    ...
 
 Contributing to the documentation

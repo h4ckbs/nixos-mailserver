@@ -1,9 +1,9 @@
 # Generate an attribute sets containing all tests for all releaeses
 # It looks like:
-# - extern.nixpkgs_20.03
-# - extern.nixpkgs_unstable
-# - intern.nixpkgs_20.03
-# - intern.nixpkgs_unstable
+# - external.nixpkgs_20.03
+# - external.nixpkgs_unstable
+# - internal.nixpkgs_20.03
+# - internal.nixpkgs_unstable
 
 with builtins;
 
@@ -32,8 +32,8 @@ let
   ];
 
   testNames = [
-    "intern"
-    "extern"
+    "internal"
+    "external"
     "clamav"
     "multiple"
   ];

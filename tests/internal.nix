@@ -37,7 +37,7 @@ let
   passwordFile = pkgs.writeText "password" "my-password";
 in
 pkgs.nixosTest {
-  name = "intern";
+  name = "internal";
   nodes = {
     machine = { config, pkgs, ... }: {
       imports = [
