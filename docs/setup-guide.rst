@@ -131,7 +131,7 @@ Note that it can take a while until a DNS entry is propagated.
 Set a ``SPF`` record
 ^^^^^^^^^^^^^^^^^^^^
 
-Add a `SPF <https://fr.wikipedia.org/wiki/Sender_Policy_Framework>`_
+Add a `SPF <https://en.wikipedia.org/wiki/Sender_Policy_Framework>`_
 record to the domain ``example.com``.
 
 ================ ===== ==== ================================
