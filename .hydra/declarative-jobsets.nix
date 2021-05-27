@@ -1,4 +1,4 @@
-{ nixpkgs, declInput, pulls }:
+{ nixpkgs, pulls, ... }:
 
 let
   pkgs = import nixpkgs {};
