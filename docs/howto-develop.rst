@@ -4,7 +4,7 @@ Contribute or troubleshoot
 To report an issue, please go to
 `<https://gitlab.com/simple-nixos-mailserver/nixos-mailserver/-/issues>`_.
 
-You can also chat with us on the Freenode IRC channel ``#nixos-mailserver``.
+You can also chat with us on the Libera IRC channel ``#nixos-mailserver``.
 
 Run NixOS tests
 ---------------
