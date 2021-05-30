@@ -12,9 +12,6 @@ SNM branch corresponding to your NixOS version.
    - Use the [SNM branch `nixos-20.09`](https://gitlab.com/simple-nixos-mailserver/nixos-mailserver/-/tree/nixos-20.09)
    - [Documentation](https://nixos-mailserver.readthedocs.io/en/nixos-20.09/)
    - [Release notes](https://nixos-mailserver.readthedocs.io/en/nixos-20.09/release-notes.html#nixos-20-09)
-* For NixOS 20.03
-   - Use the [SNM branch `nixos-20.03`](https://gitlab.com/simple-nixos-mailserver/nixos-mailserver/-/tree/nixos-20.03)
-   - [Release notes](#nixos-2003)
 * For NixOS unstable
    - Use the [SNM branch `master`](https://gitlab.com/simple-nixos-mailserver/nixos-mailserver/-/tree/master)
    - [Documentation](https://nixos-mailserver.readthedocs.io/en/latest/)

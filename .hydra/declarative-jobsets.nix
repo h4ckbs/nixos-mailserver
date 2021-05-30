@@ -61,26 +61,6 @@ let
         };
       };
     };
-    "nixos-20.03" = {
-      description = "Build the nixos-20.03 branch of Simple NixOS MailServer";
-      checkinterval = "60";
-      enabled = "1";
-      nixexprinput = "snm";
-      nixexprpath = ".hydra/default.nix";
-      schedulingshares = 100;
-      enableemail = false;
-      emailoverride = "";
-      keepnr = 3;
-      hidden = false;
-      type = 0;
-      inputs = {
-        snm = {
-          value = "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver nixos-20.03";
-          type = "git";
-          emailresponsible = false;
-        };
-      };
-    };
     "nixos-20.09" = {
       description = "Build the nixos-20.09 branch of Simple NixOS MailServer";
       checkinterval = "60";
