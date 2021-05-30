@@ -1,6 +1,16 @@
 Release Notes
 =============
 
+NixOS 21.05
+-----------
+
+- New `fullTextSearch` option to search in messages (based on Xapian)
+  (`Merge Request <https://gitlab.com/simple-nixos-mailserver/nixos-mailserver/-/merge_requests/212>`__)
+- Flake support
+  (`Merge Request <https://gitlab.com/simple-nixos-mailserver/nixos-mailserver/-/merge_requests/200>`__)
+- New `openFirewall` option defaulting to `true`
+- We moved from Freenode to Libera Chat
+
 NixOS 20.09
 -----------
 

@@ -8,6 +8,10 @@
 For each NixOS release, we publish a branch. You then have to use the
 SNM branch corresponding to your NixOS version.
 
+* For NixOS 21.05
+   - Use the [SNM branch `nixos-21.05`](https://gitlab.com/simple-nixos-mailserver/nixos-mailserver/-/tree/nixos-21.05)
+   - [Documentation](https://nixos-mailserver.readthedocs.io/en/nixos-21.05/)
+   - [Release notes](https://nixos-mailserver.readthedocs.io/en/nixos-21.05/release-notes.html#nixos-21-05)
 * For NixOS 20.09
    - Use the [SNM branch `nixos-20.09`](https://gitlab.com/simple-nixos-mailserver/nixos-mailserver/-/tree/nixos-20.09)
    - [Documentation](https://nixos-mailserver.readthedocs.io/en/nixos-20.09/)
@@ -15,7 +19,7 @@ SNM branch corresponding to your NixOS version.
 * For NixOS unstable
    - Use the [SNM branch `master`](https://gitlab.com/simple-nixos-mailserver/nixos-mailserver/-/tree/master)
    - [Documentation](https://nixos-mailserver.readthedocs.io/en/latest/)
-   - This branch is currently supporting the NixOS release 20.09 but
+   - This branch is currently supporting the NixOS release 21.05 but
      we could remove this support on any NixOS unstable breaking
      change.
 
@@ -79,7 +83,7 @@ D9FE 4119 F082 6F15 93BD  BD36 6162 DBA5 635E A16A
 
 ```nix
    { config, pkgs, ... }:
-   let release = "nixos-20.09";
+   let release = "nixos-21.05";
    in {
      imports = [
        (builtins.fetchTarball {
