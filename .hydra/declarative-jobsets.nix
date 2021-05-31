@@ -17,6 +17,13 @@ let
       keepnr = 1;
       type = 0;
       inputs = {
+        # This is only used to allow Niv to use pkgs.fetchzip which is
+        # required because of Hydra restricted evaluation mode.
+        nixpkgs = {
+          value = "https://github.com/NixOS/nixpkgs b6eefa48d8e10491e43c0c6155ac12b463f6fed3";
+          type = "git";
+          emailresponsible = false;
+        };
         snm = {
           type = "git";
           value = "${info.target_repo_url} merge-requests/${info.iid}/head";
@@ -40,6 +47,13 @@ let
       hidden = false;
       type = 0;
       inputs = {
+        # This is only used to allow Niv to use pkgs.fetchzip which is
+        # required because of Hydra restricted evaluation mode.
+        nixpkgs = {
+          value = "https://github.com/NixOS/nixpkgs b6eefa48d8e10491e43c0c6155ac12b463f6fed3";
+          type = "git";
+          emailresponsible = false;
+        };
         snm = {
           value = "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver master";
           type = "git";
@@ -80,6 +94,13 @@ let
       hidden = false;
       type = 0;
       inputs = {
+        # This is only used to allow Niv to use pkgs.fetchzip which is
+        # required because of Hydra restricted evaluation mode.
+        nixpkgs = {
+          value = "https://github.com/NixOS/nixpkgs b6eefa48d8e10491e43c0c6155ac12b463f6fed3";
+          type = "git";
+          emailresponsible = false;
+        };
         snm = {
           value = "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver nixos-20.09";
           type = "git";
