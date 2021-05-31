@@ -13,9 +13,6 @@ let
       pkgs.fetchurl { inherit (spec) url sha256; };
 
   fetch_tarball = pkgs: spec:
-    if spec.builtin or true then
-      builtins_fetchTarball { inherit (spec) url sha256; }
-    else
       pkgs.fetchzip { inherit (spec) url sha256; };
 
   fetch_git = spec:
