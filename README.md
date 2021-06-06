@@ -77,7 +77,7 @@ D9FE 4119 F082 6F15 93BD  BD36 6162 DBA5 635E A16A
 ### Get in touch
 
 - Subscribe to the [mailing list](https://www.freelists.org/archive/snm/)
-- Join the Freenode IRC channel `#nixos-mailserver`
+- Join the Libera Chat IRC channel `#nixos-mailserver`
 
 ### Quick Start
 
