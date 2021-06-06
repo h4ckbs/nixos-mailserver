@@ -32,89 +32,38 @@ let
       };
     }
   ) prs;
+  mkJobset = branch: {
+    description = "Build ${branch} branch of Simple NixOS MailServer";
+    checkinterval = "60";
+    enabled = "1";
+    nixexprinput = "snm";
+    nixexprpath = ".hydra/default.nix";
+    schedulingshares = 100;
+    enableemail = false;
+    emailoverride = "";
+    keepnr = 3;
+    hidden = false;
+    type = 0;
+    inputs = {
+      # This is only used to allow Niv to use pkgs.fetchzip which is
+      # required because of Hydra restricted evaluation mode.
+      nixpkgs = {
+        value = "https://github.com/NixOS/nixpkgs b6eefa48d8e10491e43c0c6155ac12b463f6fed3";
+        type = "git";
+        emailresponsible = false;
+      };
+      snm = {
+        value = "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver ${branch}";
+        type = "git";
+        emailresponsible = false;
+      };
+    };
+  }; 
 
   desc = prJobsets // {
-    master = {
-      description = "Build master branch of Simple NixOS MailServer";
-      checkinterval = "60";
-      enabled = "1";
-      nixexprinput = "snm";
-      nixexprpath = ".hydra/default.nix";
-      schedulingshares = 100;
-      enableemail = false;
-      emailoverride = "";
-      keepnr = 3;
-      hidden = false;
-      type = 0;
-      inputs = {
-        # This is only used to allow Niv to use pkgs.fetchzip which is
-        # required because of Hydra restricted evaluation mode.
-        nixpkgs = {
-          value = "https://github.com/NixOS/nixpkgs b6eefa48d8e10491e43c0c6155ac12b463f6fed3";
-          type = "git";
-          emailresponsible = false;
-        };
-        snm = {
-          value = "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver master";
-          type = "git";
-          emailresponsible = false;
-        };
-      };
-    };
-    "nixos-20.09" = {
-      description = "Build the nixos-20.09 branch of Simple NixOS MailServer";
-      checkinterval = "60";
-      enabled = "1";
-      nixexprinput = "snm";
-      nixexprpath = ".hydra/default.nix";
-      schedulingshares = 100;
-      enableemail = false;
-      emailoverride = "";
-      keepnr = 3;
-      hidden = false;
-      type = 0;
-      inputs = {
-        # This is only used to allow Niv to use pkgs.fetchzip which is
-        # required because of Hydra restricted evaluation mode.
-        nixpkgs = {
-          value = "https://github.com/NixOS/nixpkgs b6eefa48d8e10491e43c0c6155ac12b463f6fed3";
-          type = "git";
-          emailresponsible = false;
-        };
-        snm = {
-          value = "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver nixos-20.09";
-          type = "git";
-          emailresponsible = false;
-        };
-      };
-    };
-    "nixos-21.05" = {
-      description = "Build the nixos-21.05 branch of Simple NixOS MailServer";
-      checkinterval = "60";
-      enabled = "1";
-      nixexprinput = "snm";
-      nixexprpath = ".hydra/default.nix";
-      schedulingshares = 100;
-      enableemail = false;
-      emailoverride = "";
-      keepnr = 3;
-      hidden = false;
-      type = 0;
-      inputs = {
-        # This is only used to allow Niv to use pkgs.fetchzip which is
-        # required because of Hydra restricted evaluation mode.
-        nixpkgs = {
-          value = "https://github.com/NixOS/nixpkgs b6eefa48d8e10491e43c0c6155ac12b463f6fed3";
-          type = "git";
-          emailresponsible = false;
-        };
-        snm = {
-          value = "https://gitlab.com/simple-nixos-mailserver/nixos-mailserver master";
-          type = "git";
-          emailresponsible = false;
-        };
-      };
-    };
+    "master" = mkJobset "master";
+    "nixos-20.09" = mkJobset "nixos-20.09";
+    "nixos-21.05" = mkJobset "nixos-21.05";
   };
 
 in {
