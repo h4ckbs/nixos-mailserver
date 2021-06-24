@@ -196,10 +196,10 @@ pkgs.nixosTest {
 
       # TODO put this blocking into the systemd units? I am not sure if rspamd already waits for the clamd socket.
       server.wait_until_succeeds(
-          "timeout 1 ${nodes.server.pkgs.netcat}/bin/nc -U /run/rspamd/rspamd-milter.sock < /dev/null; [ $? -eq 124 ]"
+          "set +e; timeout 1 ${nodes.server.pkgs.netcat}/bin/nc -U /run/rspamd/rspamd-milter.sock < /dev/null; [ $? -eq 124 ]"
       )
       server.wait_until_succeeds(
-          "timeout 1 ${nodes.server.pkgs.netcat}/bin/nc -U /run/clamav/clamd.ctl < /dev/null; [ $? -eq 124 ]"
+          "set +e; timeout 1 ${nodes.server.pkgs.netcat}/bin/nc -U /run/clamav/clamd.ctl < /dev/null; [ $? -eq 124 ]"
       )
 
       client.execute("cp -p /etc/root/.* ~/")
@@ -224,12 +224,12 @@ pkgs.nixosTest {
 
       with subtest("virus scan file"):
           server.succeed(
-              'clamdscan $(readlink -f /etc/root/eicar.com.txt) | grep "Txt\\.Malware\\.Agent-1787597 FOUND" >&2'
+              'set +o pipefail; clamdscan $(readlink -f /etc/root/eicar.com.txt) | grep "Txt\\.Malware\\.Agent-1787597 FOUND" >&2'
           )
 
       with subtest("virus scan email"):
           client.succeed(
-              'msmtp -a user2 user1\@example.com < /etc/root/virus-email 2>&1 | tee /dev/stderr | grep "server message: 554 5\\.7\\.1" >&2'
+              'set +o pipefail; msmtp -a user2 user1\@example.com < /etc/root/virus-email 2>&1 | tee /dev/stderr | grep "server message: 554 5\\.7\\.1" >&2'
           )
           server.succeed("journalctl -u rspamd | grep -i eicar")
           # give the mail server some time to process the mail

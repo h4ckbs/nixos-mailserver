@@ -345,7 +345,7 @@ pkgs.nixosTest {
 
       # TODO put this blocking into the systemd units?
       server.wait_until_succeeds(
-          "timeout 1 ${nodes.server.pkgs.netcat}/bin/nc -U /run/rspamd/rspamd-milter.sock < /dev/null; [ $? -eq 124 ]"
+          "set +e; timeout 1 ${nodes.server.pkgs.netcat}/bin/nc -U /run/rspamd/rspamd-milter.sock < /dev/null; [ $? -eq 124 ]"
       )
 
       client.execute("cp -p /etc/root/.* ~/")
@@ -489,11 +489,11 @@ pkgs.nixosTest {
           client.fail("search Junk a >&2")
           # check that search really goes through the indexer
           server.succeed(
-              "journalctl -u dovecot2 | grep -E 'indexer-worker.*Indexed . messages in INBOX' >&2"
+              "journalctl -u dovecot2 | grep -E 'indexer-worker.* Mailbox INBOX: Indexed' >&2"
           )
           # check that Junk is not indexed
           server.fail(
-              "journalctl -u dovecot2 | grep -E 'indexer-worker.*Indexed . messages in Junk' >&2"
+              "journalctl -u dovecot2 | grep -E 'indexer-worker.* Mailbox JUNK: Indexed' >&2"
           )
 
       with subtest("no warnings or errors"):

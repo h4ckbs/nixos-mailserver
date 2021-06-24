@@ -133,7 +133,7 @@ pkgs.nixosTest {
         machine.wait_for_open_port(25)
         # TODO put this blocking into the systemd units
         machine.wait_until_succeeds(
-            "timeout 1 ${pkgs.netcat}/bin/nc -U /run/rspamd/rspamd-milter.sock < /dev/null; [ $? -eq 124 ]"
+            "set +e; timeout 1 ${pkgs.netcat}/bin/nc -U /run/rspamd/rspamd-milter.sock < /dev/null; [ $? -eq 124 ]"
         )
         machine.succeed(
             "cat ${sendMail} | ${pkgs.netcat-gnu}/bin/nc localhost 25 | grep -q 'This account cannot receive emails'"
@@ -141,7 +141,7 @@ pkgs.nixosTest {
 
     with subtest("rspamd controller serves web ui"):
         machine.succeed(
-            "${pkgs.curl}/bin/curl --unix-socket /run/rspamd/worker-controller.sock http://localhost/ | grep -q '<body>'"
+            "set +o pipefail; ${pkgs.curl}/bin/curl --unix-socket /run/rspamd/worker-controller.sock http://localhost/ | grep -q '<body>'"
         )
 
     with subtest("imap port 143 is closed and imaps is serving SSL"):

@@ -68,10 +68,10 @@ pkgs.nixosTest {
 
     # TODO put this blocking into the systemd units?
     domain1.wait_until_succeeds(
-        "timeout 1 ${pkgs.netcat}/bin/nc -U /run/rspamd/rspamd-milter.sock < /dev/null; [ $? -eq 124 ]"
+        "set +e; timeout 1 ${pkgs.netcat}/bin/nc -U /run/rspamd/rspamd-milter.sock < /dev/null; [ $? -eq 124 ]"
     )
     domain2.wait_until_succeeds(
-        "timeout 1 ${pkgs.netcat}/bin/nc -U /run/rspamd/rspamd-milter.sock < /dev/null; [ $? -eq 124 ]"
+        "set +e; timeout 1 ${pkgs.netcat}/bin/nc -U /run/rspamd/rspamd-milter.sock < /dev/null; [ $? -eq 124 ]"
     )
 
     # user@domain1.com sends a mail to user@domain2.com
