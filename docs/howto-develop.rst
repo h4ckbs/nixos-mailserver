@@ -9,13 +9,23 @@ You can also chat with us on the Libera IRC channel ``#nixos-mailserver``.
 Run NixOS tests
 ---------------
 
-You can run the testsuite via
+To run the test suite, you need to enable `Nix Flakes
+<https://nixos.wiki/wiki/Flakes#Installing_flakes>`.
+
+You can then run the testsuite via
 
 ::
 
-   $ nix-build tests -A external.nixpkgs_20_03
-   $ nix-build tests -A internal.nixpkgs_unstable
-   ...
+   $ nix flake check -L
+
+Since Nix doesn't garantee your machine have enough resources to run
+all test VMs in parallel, some tests can fail. You would then haev to
+run tests manually. For instance:
+
+::
+
+   $ nix build .#hydraJobs.x86_64-linux.external-unstable -L
+
 
 Contributing to the documentation
 ---------------------------------

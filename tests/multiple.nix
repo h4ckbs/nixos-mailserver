@@ -1,6 +1,6 @@
 # This tests is used to test features requiring several mail domains.
 
-{ pkgs ? import <nixpkgs> {}}:
+{ pkgs ? import <nixpkgs> {}, ...}:
 
 let
     hashPassword = password: pkgs.runCommand

@@ -14,19 +14,12 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program. If not, see <http://www.gnu.org/licenses/>
 
-{ pkgs ? import <nixpkgs> {}}:
+{ pkgs ? import <nixpkgs> {}, blobs}:
 
 pkgs.nixosTest {
   name = "clamav";
   nodes = {
     server = { config, pkgs, lib, ... }:
-      let
-        sources = import ../nix/sources.nix;
-        blobs = pkgs.fetchzip {
-          url = sources.blobs.url;
-          sha256 = sources.blobs.sha256;
-        };
-      in
         {
             imports = [
                 ../default.nix
