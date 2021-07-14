@@ -46,6 +46,13 @@ documentation:
    $ make html
    $ firefox ./_build/html/index.html
 
+Note if you modify some NixOS mailserver options, you would also need
+to regenerate the ``options.rst`` file:
+
+::
+
+   $ nix-shell --run generate-rst-options
+
 Nixops
 ------
 

@@ -17,6 +17,7 @@ Welcome to NixOS Mailserver's documentation!
    howto-develop
    faq
    release-notes
+   options
 
 .. toctree::
    :maxdepth: 1
