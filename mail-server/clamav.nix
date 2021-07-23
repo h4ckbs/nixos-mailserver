@@ -18,25 +18,13 @@
 
 let
   cfg = config.mailserver;
-  clamHasSettings = options.services.clamav.daemon ? settings;
 in
-with lib;
 {
   config = lib.mkIf (cfg.enable && cfg.virusScanning) {
-
-    # Remove extraConfig and settings conditional after 20.09 support is removed
-
     services.clamav.daemon = {
       enable = true;
-    } // (if clamHasSettings then {
       settings.PhishingScanURLs = "no";
-    } else {
-      extraConfig = ''
-        PhishingScanURLs no
-      '';
-    });
-
+    };
     services.clamav.updater.enable = true;
   };
 }
-

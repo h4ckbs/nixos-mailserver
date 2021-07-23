@@ -421,27 +421,24 @@ in
         The mailboxes for dovecot.
         Depending on the mail client used it might be necessary to change some mailbox's name.
       '';
-      default = let
-        defMailBoxes = {
-          Trash = {
-            auto = "no";
-            specialUse = "Trash";
-          };
-          Junk = {
-            auto = "subscribe";
-            specialUse = "Junk";
-          };
-          Drafts = {
-            auto = "subscribe";
-            specialUse = "Drafts";
-          };
-          Sent = {
-            auto = "subscribe";
-            specialUse = "Sent";
-          };
+      default = {
+        Trash = {
+          auto = "no";
+          specialUse = "Trash";
         };
-      in if (versionAtLeast version "20.09pre") then defMailBoxes
-      else (flip mapAttrsToList defMailBoxes (name: options: { inherit name; } // options));
+        Junk = {
+          auto = "subscribe";
+          specialUse = "Junk";
+        };
+        Drafts = {
+          auto = "subscribe";
+          specialUse = "Drafts";
+        };
+        Sent = {
+          auto = "subscribe";
+          specialUse = "Sent";
+        };
+      };
     };
 
     certificateScheme = mkOption {
