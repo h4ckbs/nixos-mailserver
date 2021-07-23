@@ -56,6 +56,10 @@
         modules = [
           mailserverModule
           {
+            # Because the blockbook package is currently broken (we
+            # don't care about this package but it is part of the
+            # NixOS module evaluation)
+            nixpkgs.config.allowBroken = true;
             mailserver.fqdn = "mx.example.com";
           }
         ];
@@ -84,11 +88,33 @@
       echo "test: ok" > $out
     '';
 
+    documentation = pkgs.stdenv.mkDerivation {
+      name = "documentation";
+      src = pkgs.lib.sourceByRegex ./docs ["logo.png" "conf.py" "Makefile" ".*rst$"];
+      buildInputs = [(
+        pkgs.python3.withPackages(p: [
+          p.sphinx
+          p.sphinx_rtd_theme
+        ])
+      )];
+      buildPhase = ''
+        cp ${generateRstOptions} options.rst
+        mkdir -p _static
+        # Workaround for https://github.com/sphinx-doc/sphinx/issues/3451
+        export SOURCE_DATE_EPOCH=$(${pkgs.coreutils}/bin/date +%s)
+        make html
+      '';
+      installPhase = ''
+        cp -r _build/html $out
+      '';
+    };
+
   in rec {
     nixosModules.mailserver = mailserverModule ;
     nixosModule = self.nixosModules.mailserver;
     hydraJobs.${system} = allTests // {
       test-rst-options = testRstOptions;
+      inherit documentation;
     };
     checks.${system} = allTests;
     devShell.${system} = pkgs.mkShell {
