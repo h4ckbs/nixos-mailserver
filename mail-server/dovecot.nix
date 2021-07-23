@@ -85,9 +85,22 @@ let
 
     chmod 600 ${passwdFile}
   '';
+
+  junkMailboxes = builtins.attrNames (lib.filterAttrs (n: v: v ? "specialUse" && v.specialUse == "Junk") cfg.mailboxes);
+  junkMailboxNumber = builtins.length junkMailboxes;
+  # The assertion garantees there is exactly one Junk mailbox.
+  junkMailboxName = if junkMailboxNumber == 1 then builtins.elemAt junkMailboxes 0 else "";
+
 in
 {
   config = with cfg; lib.mkIf enable {
+    assertions = [
+      {
+        assertion = junkMailboxNumber == 1;
+        message = "nixos-mailserver requires exactly one dovecot mailbox with the 'special use' flag set to 'Junk' (${builtins.toString junkMailboxNumber} have been found)";
+      }
+    ];
+
     services.dovecot2 = {
       enable = true;
       enableImap = enableImap || enableImapSsl;
@@ -109,7 +122,7 @@ in
           require "fileinto";
 
           if header :is "X-Spam" "Yes" {
-              fileinto "Junk";
+              fileinto "${junkMailboxName}";
               stop;
           }
         '';
@@ -229,13 +242,13 @@ in
           sieve_default_name = default
 
           # From elsewhere to Spam folder
-          imapsieve_mailbox1_name = Junk
+          imapsieve_mailbox1_name = ${junkMailboxName}
           imapsieve_mailbox1_causes = COPY
           imapsieve_mailbox1_before = file:${stateDir}/imap_sieve/report-spam.sieve
 
           # From Spam folder to elsewhere
           imapsieve_mailbox2_name = *
-          imapsieve_mailbox2_from = Junk
+          imapsieve_mailbox2_from = ${junkMailboxName}
           imapsieve_mailbox2_causes = COPY
           imapsieve_mailbox2_before = file:${stateDir}/imap_sieve/report-ham.sieve
 
