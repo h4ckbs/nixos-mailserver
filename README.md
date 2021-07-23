@@ -160,4 +160,4 @@ See the [contributor tab](https://gitlab.com/simple-nixos-mailserver/nixos-mails
 
 
 
-[logo]: logo/logo.png
+[logo]: docs/logo.png
