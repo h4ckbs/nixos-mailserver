@@ -172,6 +172,8 @@ in
         virtual_mailbox_domains = vhosts_file;
         virtual_mailbox_maps = mappedFile "valias";
         virtual_transport = "lmtp:unix:/run/dovecot2/dovecot-lmtp";
+        # Avoid leakage of X-Original-To, X-Delivered-To headers between recipients
+        lmtp_destination_recipient_limit = "1";
 
         # sasl with dovecot
         smtpd_sasl_type = "dovecot";
@@ -241,6 +243,11 @@ in
       submissionsOptions = submissionOptions;
 
       masterConfig = {
+        "lmtp" = {
+          # Add headers when delivering, see http://www.postfix.org/smtp.8.html
+          # D => Delivered-To, O => X-Original-To, R => Return-Path
+          args = [ "flags=O" ];
+        };
         "policy-spf" = {
           type = "unix";
           privileged = true;
