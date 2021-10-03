@@ -59,7 +59,16 @@
             # don't care about this package but it is part of the
             # NixOS module evaluation)
             nixpkgs.config.allowBroken = true;
-            mailserver.fqdn = "mx.example.com";
+            mailserver = {
+              fqdn = "mx.example.com";
+              domains = [
+                "example.com"
+              ];
+              dmarcReporting = {
+                organizationName = "Example Corp";
+                domain = "example.com";
+              };
+            };
           }
         ];
 

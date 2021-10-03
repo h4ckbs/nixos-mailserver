@@ -19,6 +19,72 @@ to enable this unless you're hacking on nixos-mailserver.
 - Default: ``False``
 
 
+mailserver.dmarcReporting.domain
+--------------------------------
+
+The domain from which outgoing DMARC reports are served.
+
+
+- Type: ``value "example.com" (singular enum)``
+
+
+
+mailserver.dmarcReporting.email
+-------------------------------
+
+None
+
+- Type: ``string``
+- Default: ``dmarc-noreply@example.com``
+
+
+mailserver.dmarcReporting.enable
+--------------------------------
+
+Whether to send out aggregated, daily DMARC reports in response to incoming
+mail, when the sender domain defines a DMARC policy including the RUA tag.
+
+This is helpful for the mail ecosystem, because it allows third parties to
+get notified about SPF/DKIM violations originating from their sender domains.
+
+See https://rspamd.com/doc/modules/dmarc.html#reporting
+
+
+- Type: ``boolean``
+- Default: ``False``
+
+
+mailserver.dmarcReporting.fromName
+----------------------------------
+
+The sender name for DMARC reports. Defaults to the organization name.
+
+
+- Type: ``string``
+- Default: ``Example Corp``
+
+
+mailserver.dmarcReporting.localpart
+-----------------------------------
+
+The local part of the email address used for outgoing DMARC reports.
+
+
+- Type: ``string``
+- Default: ``dmarc-noreply``
+
+
+mailserver.dmarcReporting.organizationName
+------------------------------------------
+
+The name of your organization used in the <literal>org_name</literal> attribute in
+DMARC reports.
+
+
+- Type: ``string``
+
+
+
 mailserver.domains
 ------------------
 
@@ -489,7 +555,7 @@ For which domains should this account act as a catch all?
 Note: Does not allow sending from all addresses of these domains.
 
 
-- Type: ``list of impossible (empty enum)s``
+- Type: ``list of value "example.com" (singular enum)s``
 - Default: ``[]``
 
 

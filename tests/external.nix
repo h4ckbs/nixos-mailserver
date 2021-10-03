@@ -43,6 +43,11 @@ pkgs.nixosTest {
               domains = [ "example.com" "example2.com" ];
               rewriteMessageId = true;
               dkimKeyBits = 1535;
+              dmarcReporting = {
+                enable = true;
+                domain = "example.com";
+                organizationName = "ACME Corp";
+              };
 
               loginAccounts = {
                   "user1@example.com" = {
@@ -493,6 +498,10 @@ pkgs.nixosTest {
           )
           # check that Junk is not indexed
           server.fail("journalctl -u dovecot2 | grep 'indexer-worker' | grep -i 'JUNK' >&2")
+
+      with subtest("dmarc reporting"):
+          server.systemctl("start rspamd-dmarc-reporter.service")
+          server.wait_until_succeeds("journalctl -eu rspamd-dmarc-reporter.service -o cat | grep -q 'No reports for '")
 
       with subtest("no warnings or errors"):
           server.fail("journalctl -u postfix | grep -i error >&2")

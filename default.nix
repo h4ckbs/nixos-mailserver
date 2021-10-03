@@ -627,6 +627,63 @@ in
         '';
     };
 
+    dmarcReporting = {
+      enable = mkOption {
+        type = types.bool;
+        default = false;
+        description = ''
+          Whether to send out aggregated, daily DMARC reports in response to incoming
+          mail, when the sender domain defines a DMARC policy including the RUA tag.
+
+          This is helpful for the mail ecosystem, because it allows third parties to
+          get notified about SPF/DKIM violations originating from their sender domains.
+
+          See https://rspamd.com/doc/modules/dmarc.html#reporting
+        '';
+      };
+
+      localpart = mkOption {
+        type = types.str;
+        default = "dmarc-noreply";
+        example = "dmarc-report";
+        description = ''
+          The local part of the email address used for outgoing DMARC reports.
+        '';
+      };
+
+      domain = mkOption {
+        type = types.enum (cfg.domains);
+        example = "example.com";
+        description = ''
+          The domain from which outgoing DMARC reports are served.
+        '';
+      };
+
+      email = mkOption {
+        type = types.str;
+        default = with cfg.dmarcReporting; "${localpart}@${domain}";
+        example = "dmarc-noreply@example.com";
+        readOnly = true;
+      };
+
+      organizationName = mkOption {
+        type = types.str;
+        example = "ACME Corp.";
+        description = ''
+          The name of your organization used in the <literal>org_name</literal> attribute in
+          DMARC reports.
+        '';
+      };
+
+      fromName = mkOption {
+        type = types.str;
+        default = cfg.dmarcReporting.organizationName;
+        description = ''
+          The sender name for DMARC reports. Defaults to the organization name.
+        '';
+      };
+    };
+
     debug = mkOption {
       type = types.bool;
       default = false;
