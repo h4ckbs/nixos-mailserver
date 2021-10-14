@@ -59,7 +59,7 @@ in
         keyPath = cfg.dkimKeyDirectory;
         domains = "csl:${builtins.concatStringsSep "," cfg.domains}";
         configFile = pkgs.writeText "opendkim.conf" (''
-          Canonicalization relaxed/simple
+          Canonicalization ${cfg.dkimHeaderCanonicalization}/${cfg.dkimBodyCanonicalization}
           UMask 0002
           Socket ${dkim.socket}
           KeyTable file:${keyTable}

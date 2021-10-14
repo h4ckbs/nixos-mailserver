@@ -600,6 +600,26 @@ in
         '';
     };
 
+    dkimHeaderCanonicalization = mkOption {
+        type = types.enum ["relaxed" "simple"];
+        default = "relaxed";
+        description = ''
+          DKIM canonicalization algorithm for message headers.
+
+          See https://datatracker.ietf.org/doc/html/rfc6376/#section-3.4 for details.
+        '';
+    };
+
+    dkimBodyCanonicalization = mkOption {
+        type = types.enum ["relaxed" "simple"];
+        default = "relaxed";
+        description = ''
+          DKIM canonicalization algorithm for message bodies.
+
+          See https://datatracker.ietf.org/doc/html/rfc6376/#section-3.4 for details.
+        '';
+    };
+
     debug = mkOption {
       type = types.bool;
       default = false;

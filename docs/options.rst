@@ -627,6 +627,30 @@ mailserver.dkim
 ~~~~~~~~~~~~~~~
 
 
+mailserver.dkimBodyCanonicalization
+-----------------------------------
+
+DKIM canonicalization algorithm for message bodies.
+
+See https://datatracker.ietf.org/doc/html/rfc6376/#section-3.4 for details.
+
+
+- Type: ``one of "relaxed", "simple"``
+- Default: ``relaxed``
+
+
+mailserver.dkimHeaderCanonicalization
+-------------------------------------
+
+DKIM canonicalization algorithm for message headers.
+
+See https://datatracker.ietf.org/doc/html/rfc6376/#section-3.4 for details.
+
+
+- Type: ``one of "relaxed", "simple"``
+- Default: ``relaxed``
+
+
 mailserver.dkimKeyBits
 ----------------------
 
