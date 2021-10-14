@@ -1,5 +1,6 @@
 import json
 import sys
+import re
 
 header = """
 Mailserver Options
@@ -23,31 +24,37 @@ template = """
 f = open(sys.argv[1])
 options = json.load(f)
 
-options = { k: v for k, v in options.items() if k.startswith("mailserver.") }
+options = {k: v for k, v in options.items()
+           if k.startswith("mailserver.")}
 
-groups = [ "mailserver.loginAccount",
-           "mailserver.certificate",
-           "mailserver.dkim",
-           "mailserver.fullTextSearch",
-           "mailserver.redis",
-           "mailserver.monitoring",
-           "mailserver.backup",
-           "mailserver.borg" ]
+groups = ["mailserver.loginAccount",
+          "mailserver.certificate",
+          "mailserver.dkim",
+          "mailserver.fullTextSearch",
+          "mailserver.redis",
+          "mailserver.monitoring",
+          "mailserver.backup",
+          "mailserver.borg"]
+
 
 def print_option(name, value):
-    if 'default' in v:
-        if v['default'] == "":
+    if 'default' in value:
+        if value['default'] == "":
             default = '- Default: ``""``'
         else:
             default = '- Default: ``{}``'.format(v['default'])
+            # Some default values contains OUTPUTPATHS which make the
+            # output not stable across nixpkgs updates.
+            default = re.sub('/nix/store/[\w.-]*/', '<OUTPUT-PATH>/', default)  # noqa
     else:
         default = ""
     print(template.format(
-        key=k,
-        line="-"*len(k),
-        description=v['description'],
-        type="- Type: ``{}``".format(v['type']),
+        key=name,
+        line="-"*len(name),
+        description=value['description'],
+        type="- Type: ``{}``".format(value['type']),
         default=default))
+
 
 print(header)
 for k, v in options.items():

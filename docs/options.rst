@@ -489,7 +489,7 @@ For which domains should this account act as a catch all?
 Note: Does not allow sending from all addresses of these domains.
 
 
-- Type: ``list of one of s``
+- Type: ``list of impossible (empty enum)s``
 - Default: ``[]``
 
 
@@ -858,23 +858,23 @@ check system $HOST
       if loadavg (15min) > 70 for 8 cycles then alert
 
 check process sshd with pidfile /var/run/sshd.pid
-      start program  "/nix/store/gyg6zyw1f0d1ahh1yk0pl18sxwx5a3zc-systemd-246.6/bin/systemctl start sshd"
-      stop program  "/nix/store/gyg6zyw1f0d1ahh1yk0pl18sxwx5a3zc-systemd-246.6/bin/systemctl stop sshd"
+      start program  "<OUTPUT-PATH>/bin/systemctl start sshd"
+      stop program  "<OUTPUT-PATH>/bin/systemctl stop sshd"
       if failed port 22 protocol ssh for 2 cycles then restart
 
 check process postfix with pidfile /var/lib/postfix/queue/pid/master.pid
-      start program = "/nix/store/gyg6zyw1f0d1ahh1yk0pl18sxwx5a3zc-systemd-246.6/bin/systemctl start postfix"
-      stop program = "/nix/store/gyg6zyw1f0d1ahh1yk0pl18sxwx5a3zc-systemd-246.6/bin/systemctl stop postfix"
+      start program = "<OUTPUT-PATH>/bin/systemctl start postfix"
+      stop program = "<OUTPUT-PATH>/bin/systemctl stop postfix"
       if failed port 25 protocol smtp for 5 cycles then restart
 
 check process dovecot with pidfile /var/run/dovecot2/master.pid
-      start program = "/nix/store/gyg6zyw1f0d1ahh1yk0pl18sxwx5a3zc-systemd-246.6/bin/systemctl start dovecot2"
-      stop program = "/nix/store/gyg6zyw1f0d1ahh1yk0pl18sxwx5a3zc-systemd-246.6/bin/systemctl stop dovecot2"
+      start program = "<OUTPUT-PATH>/bin/systemctl start dovecot2"
+      stop program = "<OUTPUT-PATH>/bin/systemctl stop dovecot2"
       if failed host mx.example.com port 993 type tcpssl sslauto protocol imap for 5 cycles then restart
 
 check process rspamd with pidfile /var/run/rspamd.pid
-      start program = "/nix/store/gyg6zyw1f0d1ahh1yk0pl18sxwx5a3zc-systemd-246.6/bin/systemctl start rspamd"
-      stop program = "/nix/store/gyg6zyw1f0d1ahh1yk0pl18sxwx5a3zc-systemd-246.6/bin/systemctl stop rspamd"
+      start program = "<OUTPUT-PATH>/bin/systemctl start rspamd"
+      stop program = "<OUTPUT-PATH>/bin/systemctl stop rspamd"
 ``
 
 
