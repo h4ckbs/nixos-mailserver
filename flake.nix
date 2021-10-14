@@ -84,6 +84,7 @@
       then
         echo "The file ./docs/options.rst is not up-to-date and needs to be regenerated!"
         echo "  hint: run 'nix-shell --run generate-rst-options' to generate this file"
+        exit 1
       fi
       echo "test: ok" > $out
     '';
