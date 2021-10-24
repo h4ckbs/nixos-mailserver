@@ -36,7 +36,6 @@ in
     };
 
     security.acme.certs."${cfg.fqdn}".postRun = ''
-      systemctl reload nginx
       systemctl reload postfix
       systemctl reload dovecot2
     '';
