@@ -205,7 +205,7 @@ in
         https://doc.dovecot.org/configuration_manual/mail_location/#variables
         for details.
       '';
-      example = "/var/lib/docecot/indices/%d/%n";
+      example = "/var/lib/dovecot/indices";
     };
 
     fullTextSearch = {
