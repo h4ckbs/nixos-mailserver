@@ -257,7 +257,7 @@ in
           sieve_global_extensions = +vnd.dovecot.pipe +vnd.dovecot.environment
         }
 
-        ${lib.optionalString (cfg.fullTextSearch.enable != null) ''
+        ${lib.optionalString cfg.fullTextSearch.enable ''
         plugin {
           plugin = fts fts_xapian
           fts = xapian
