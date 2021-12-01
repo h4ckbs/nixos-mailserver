@@ -1,6 +1,21 @@
 Release Notes
 =============
 
+NixOS 21.11
+-----------
+
+- Switch default DKIM body policy from simple to relaxed
+  (`merge request <https://gitlab.com/simple-nixos-mailserver/nixos-mailserver/-/merge_requests/247>`__)
+- Ensure locally-delivered mails have the X-Original-To header
+  (`merge request <https://gitlab.com/simple-nixos-mailserver/nixos-mailserver/-/merge_requests/243>`__)
+- NixOS Mailserver options are detailed in the `documentation
+  <https://nixos-mailserver.readthedocs.io/en/latest/options.html>`__
+- New options ``dkimBodyCanonicalization`` and
+  ``dkimHeaderCanonicalization``
+- New option ``certificateDomains`` to generate certificate for
+  additional domains (such as ``imap.example.com``)
+
+
 NixOS 21.05
 -----------
 

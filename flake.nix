@@ -5,13 +5,14 @@
     utils.url = "github:numtide/flake-utils";
     nixpkgs.url = "flake:nixpkgs/nixos-unstable";
     nixpkgs-21_05.url = "flake:nixpkgs/nixos-21.05";
+    nixpkgs-21_11.url = "flake:nixpkgs/nixos-21.11";
     blobs = {
       url = "gitlab:simple-nixos-mailserver/blobs";
       flake = false;
     };
   };
 
-  outputs = { self, utils, blobs, nixpkgs, nixpkgs-21_05 }: let
+  outputs = { self, utils, blobs, nixpkgs, nixpkgs-21_05, nixpkgs-21_11 }: let
     system = "x86_64-linux";
     pkgs = nixpkgs.legacyPackages.${system};
     # We want to test nixos-mailserver on several nixos releases
@@ -23,6 +24,10 @@
       {
         name = "21_05";
         pkgs = nixpkgs-21_05.legacyPackages.${system};
+      }
+      {
+        name = "21_11";
+        pkgs = nixpkgs-21_11.legacyPackages.${system};
       }
     ];
     testNames = [
