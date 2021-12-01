@@ -99,12 +99,6 @@ in
     };
 
     services.redis.enable = true;
-    assertions = [
-      { 
-        assertion = isNull config.services.redis.unixSocket;
-        message = "nixos-mailserver doesn't support redis over UNIX socket";
-      }
-    ];
 
     systemd.services.rspamd = {
       requires = [ "redis.service" ] ++ (lib.optional cfg.virusScanning "clamav-daemon.service");
