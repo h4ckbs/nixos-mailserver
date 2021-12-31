@@ -25,6 +25,7 @@ Welcome to NixOS Mailserver's documentation!
 
    backup-guide
    add-radicale
+   add-roundcube
    rspamd-tuning
    fts
    flakes
