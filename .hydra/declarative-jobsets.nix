@@ -17,7 +17,7 @@ let
       flake = "gitlab:simple-nixos-mailserver/nixos-mailserver/merge-requests/${info.iid}/head";
     }
   ) prs;
-  # This could be removed once branch 20.09 and 21.05 would have been
+  # This could be removed once branch 21.11 would have been
   # removed.
   mkJobset = branch: {
     description = "Build ${branch} branch of Simple NixOS MailServer";
@@ -61,7 +61,6 @@ let
 
   desc = prJobsets // {
     "master" = mkFlakeJobset "master";
-    "nixos-21.05" = mkJobset "nixos-21.05";
     "nixos-21.11" = mkFlakeJobset "nixos-21.11";
   };
 

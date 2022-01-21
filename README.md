@@ -83,7 +83,7 @@ D9FE 4119 F082 6F15 93BD  BD36 6162 DBA5 635E A16A
 
 ```nix
    { config, pkgs, ... }:
-   let release = "nixos-21.05";
+   let release = "nixos-21.11";
    in {
      imports = [
        (builtins.fetchTarball {
