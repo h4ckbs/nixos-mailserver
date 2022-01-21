@@ -587,7 +587,7 @@ mailserver.certificateDirectory
 
 Scheme 2)
 This is the folder where the certificate will be created. The name is
-hardcoded to "cert-<domain>.pem" and "key-<domain>.pem" and the
+hardcoded to "cert-DOMAIN.pem" and "key-DOMAIN.pem" and the
 certificate is valid for 10 years.
 
 
@@ -741,7 +741,7 @@ mailserver.fullTextSearch.enforced
 
 Fail searches when no index is available. If set to
 <literal>body</literal>, then only body searches (as opposed to
-header) are affected. If set to <literal>no<literal>, searches may
+header) are affected. If set to <literal>no</literal>, searches may
 fall back to a very slow brute force search.
 
 
@@ -818,35 +818,31 @@ mailserver.redis
 mailserver.redis.address
 ------------------------
 
-Address that rspamd should use to contact redis. The default value
-is read from <literal>config.services.redis.bind</literal>.
+Address that rspamd should use to contact redis.
 
 
 - Type: ``string``
-- Default: ``127.0.0.1``
+- Default: computed from <option>config.services.redis.servers.rspamd.bind</option>
 
 
 mailserver.redis.password
 -------------------------
 
-Password that rspamd should use to contact redis, or null if not
-required. The default value is read from
-<literal>config.services.redis.requirePass<literal>.
+Password that rspamd should use to contact redis, or null if not required.
 
 
 - Type: ``null or string``
-- Default: ``None``
+- Default: ``config.services.redis.servers.rspamd.requirePass``
 
 
 mailserver.redis.port
 ---------------------
 
-Port that rspamd should use to contact redis. The default value is
-read from <literal>config.services.redis.port<literal>.
+Port that rspamd should use to contact redis.
 
 
 - Type: ``16 bit unsigned integer; between 0 and 65535 (both inclusive)``
-- Default: ``6379``
+- Default: ``config.services.redis.servers.rspamd.port``
 
 mailserver.monitoring
 ~~~~~~~~~~~~~~~~~~~~~
@@ -870,45 +866,7 @@ Use a mail address that you actively check and set it via 'set alert ...'.
 
 
 - Type: ``string``
-- Default: ``set daemon 120 with start delay 60
-set mailserver
-    localhost
-
-set httpd port 2812 and use address localhost
-    allow localhost
-    allow admin:obwjoawijerfoijsiwfj29jf2f2jd
-
-check filesystem root with path /
-      if space usage > 80% then alert
-      if inode usage > 80% then alert
-
-check system $HOST
-      if cpu usage > 95% for 10 cycles then alert
-      if memory usage > 75% for 5 cycles then alert
-      if swap usage > 20% for 10 cycles then alert
-      if loadavg (1min) > 90 for 15 cycles then alert
-      if loadavg (5min) > 80 for 10 cycles then alert
-      if loadavg (15min) > 70 for 8 cycles then alert
-
-check process sshd with pidfile /var/run/sshd.pid
-      start program  "<OUTPUT-PATH>/bin/systemctl start sshd"
-      stop program  "<OUTPUT-PATH>/bin/systemctl stop sshd"
-      if failed port 22 protocol ssh for 2 cycles then restart
-
-check process postfix with pidfile /var/lib/postfix/queue/pid/master.pid
-      start program = "<OUTPUT-PATH>/bin/systemctl start postfix"
-      stop program = "<OUTPUT-PATH>/bin/systemctl stop postfix"
-      if failed port 25 protocol smtp for 5 cycles then restart
-
-check process dovecot with pidfile /var/run/dovecot2/master.pid
-      start program = "<OUTPUT-PATH>/bin/systemctl start dovecot2"
-      stop program = "<OUTPUT-PATH>/bin/systemctl stop dovecot2"
-      if failed host mx.example.com port 993 type tcpssl sslauto protocol imap for 5 cycles then restart
-
-check process rspamd with pidfile /var/run/rspamd.pid
-      start program = "<OUTPUT-PATH>/bin/systemctl start rspamd"
-      stop program = "<OUTPUT-PATH>/bin/systemctl stop rspamd"
-``
+- Default: see source
 
 
 mailserver.monitoring.enable
@@ -1081,7 +1039,7 @@ When using encryption the password / passphrase must be provided in passphraseFi
 mailserver.borgbackup.encryption.passphraseFile
 -----------------------------------------------
 
-This option has no description.
+Path to a file containing the encryption password or passphrase.
 
 - Type: ``null or path``
 - Default: ``None``

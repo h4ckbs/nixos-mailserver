@@ -40,12 +40,18 @@ groups = ["mailserver.loginAccount",
 def print_option(name, value):
     if 'default' in value:
         if value['default'] == "":
-            default = '- Default: ``""``'
+            default = '``""``'
+        elif isinstance(value['default'], dict) and '_type' in value['default']:
+            if value['default']['_type'] == 'literalExpression':
+                default = '``{}``'.format(value['default']['text'])
+            if value['default']['_type'] == 'literalDocBook':
+                default = value['default']['text']
         else:
-            default = '- Default: ``{}``'.format(v['default'])
-            # Some default values contains OUTPUTPATHS which make the
-            # output not stable across nixpkgs updates.
-            default = re.sub('/nix/store/[\w.-]*/', '<OUTPUT-PATH>/', default)  # noqa
+            default = '``{}``'.format(value['default'])
+        # Some default values contains OUTPUTPATHS which make the
+        # output not stable across nixpkgs updates.
+        default = re.sub('/nix/store/[\w.-]*/', '<OUTPUT-PATH>/', default)  # noqa
+        default = '- Default: ' + default
     else:
         default = ""
     print(template.format(
