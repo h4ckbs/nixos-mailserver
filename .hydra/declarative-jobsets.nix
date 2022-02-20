@@ -57,12 +57,12 @@ let
     hidden = false;
     type = 1;
     flake = "gitlab:simple-nixos-mailserver/nixos-mailserver/${branch}";
-  }; 
+  };
 
   desc = prJobsets // {
     "master" = mkFlakeJobset "master";
     "nixos-21.05" = mkJobset "nixos-21.05";
-    "nixos-21.11" = mkJobset "nixos-21.11";
+    "nixos-21.11" = mkFlakeJobset "nixos-21.11";
   };
 
   log = {
