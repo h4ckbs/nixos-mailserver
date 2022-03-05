@@ -489,7 +489,7 @@ pkgs.nixosTest {
           client.fail("search Junk a >&2")
           # check that search really goes through the indexer
           server.succeed(
-              "journalctl -u dovecot2 | grep -E 'indexer-worker.* Mailbox INBOX: Mailbox opened because: indexing' >&2"
+              "journalctl -u dovecot2 | grep -E 'indexer-worker.* Done indexing .INBOX.' >&2"
           )
           # check that Junk is not indexed
           server.fail("journalctl -u dovecot2 | grep 'indexer-worker' | grep -i 'JUNK' >&2")
