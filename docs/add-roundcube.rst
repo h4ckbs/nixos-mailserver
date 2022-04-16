@@ -1,4 +1,4 @@
-Add Roundube, a webmail
+Add Roundcube, a webmail
 =======================
 
 The NixOS module for roundcube nearly works out of the box with SNM. By
