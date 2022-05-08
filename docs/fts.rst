@@ -42,7 +42,7 @@ Indices created by the full text search feature can take more disk
 space than the emails themselves. By default, they are kept in the
 emails location. When enabling the full text search feature, it is
 recommended to move indices in a different location, such as
-(``/var/lib/docecot/indices/%d/%n``) by using the option
+(``/var/lib/dovecot/indices``) by using the option
 ``mailserver.indexDir``.
 
 .. warning::
