@@ -8,14 +8,14 @@
 For each NixOS release, we publish a branch. You then have to use the
 SNM branch corresponding to your NixOS version.
 
+* For NixOS 22.05
+   - Use the [SNM branch `nixos-22.05`](https://gitlab.com/simple-nixos-mailserver/nixos-mailserver/-/tree/nixos-22.05)
+   - [Documentation](https://nixos-mailserver.readthedocs.io/en/nixos-22.05/)
+   - [Release notes](https://nixos-mailserver.readthedocs.io/en/nixos-22.05/release-notes.html#nixos-22-05)
 * For NixOS 21.11
    - Use the [SNM branch `nixos-21.11`](https://gitlab.com/simple-nixos-mailserver/nixos-mailserver/-/tree/nixos-21.11)
    - [Documentation](https://nixos-mailserver.readthedocs.io/en/nixos-21.11/)
    - [Release notes](https://nixos-mailserver.readthedocs.io/en/nixos-21.11/release-notes.html#nixos-21-11)
-* For NixOS 21.05
-   - Use the [SNM branch `nixos-21.05`](https://gitlab.com/simple-nixos-mailserver/nixos-mailserver/-/tree/nixos-21.05)
-   - [Documentation](https://nixos-mailserver.readthedocs.io/en/nixos-21.05/)
-   - [Release notes](https://nixos-mailserver.readthedocs.io/en/nixos-21.05/release-notes.html#nixos-21-05)
 * For NixOS unstable
    - Use the [SNM branch `master`](https://gitlab.com/simple-nixos-mailserver/nixos-mailserver/-/tree/master)
    - [Documentation](https://nixos-mailserver.readthedocs.io/en/latest/)

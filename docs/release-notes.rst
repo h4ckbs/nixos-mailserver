@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+NixOS 22.05
+-----------
+
+- Make NixOS Mailserver options discoverable from search.nixos.org
+- Add a roundcube setup guide in the documentation
+
 NixOS 21.11
 -----------
 
