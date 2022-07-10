@@ -96,7 +96,14 @@ Set rDNS (reverse DNS) entry for server
 
 Wherever you have rented your server, you should be able to set reverse
 DNS entries for the IP’s you own. Add an entry resolving ``1.2.3.4``
-to ``mail.example.com``
+to ``mail.example.com``.
+
+.. warning::
+
+   We don't recommend setting up a mail server if you are not able to
+   set a reverse DNS on your public IP because sent emails would be
+   mostly marked as spam. Note that many residential ISP providers
+   don't allow you to set a reverse DNS entry.
 
 You can check this with
 
