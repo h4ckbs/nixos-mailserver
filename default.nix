@@ -194,6 +194,156 @@ in
       default = {};
     };
 
+    ldap = {
+      enable = mkEnableOption "LDAP support";
+
+      uris  = mkOption {
+        type = types.listOf types.str;
+        example = literalExpression ''
+          [
+            "ldaps://ldap1.example.com"
+            "ldaps://ldap2.example.com"
+          ]
+        '';
+        description = ''
+          URIs where your LDAP server can be reached
+        '';
+      };
+
+      startTls = mkOption {
+        type = types.bool;
+        default = false;
+        description = ''
+          Whether to enable StartTLS upon connection to the server.
+        '';
+      };
+
+      tlsCAFile = mkOption {
+        type = types.path;
+        default = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
+        description = ''
+          Certifificate trust anchors used to verify the LDAP server certificate.
+        '';
+      };
+
+      bind = {
+        dn = mkOption {
+          type = types.str;
+          example = "cn=mail,ou=accounts,dc=example,dc=com";
+          description = ''
+            Distinguished name used by the mail server to do lookups
+            against the LDAP servers.
+          '';
+        };
+
+        password = mkOption {
+          type = types.str;
+          example = "not$4f3";
+          description = ''
+            Password required to authenticate against the LDAP servers.
+          '';
+        };
+      };
+
+      searchBase = mkOption {
+        type = types.str;
+        example = "ou=people,ou=accounts,dc=example,dc=com";
+        description = ''
+          Base DN at below which to search for users accounts.
+        '';
+      };
+
+      searchScope = mkOption {
+        type = types.enum [ "sub" "base" "one" ];
+        default = "sub";
+        description = ''
+          Search scope below which users accounts are looked for.
+        '';
+      };
+
+      dovecot = {
+        userAttrs = mkOption {
+          type = types.str;
+          default = "";
+          description = ''
+            LDAP attributes to be retrieved during userdb lookups.
+
+            See the users_attrs reference at
+            https://doc.dovecot.org/configuration_manual/authentication/ldap_settings_auth/#user-attrs
+            in the Dovecot manual.
+          '';
+        };
+
+        userFilter = mkOption {
+          type = types.str;
+          default = "cn=%u";
+          example = "(&(objectClass=inetOrgPerson)(cn=%u))";
+          description = ''
+            Filter for user lookups in Dovecot.
+
+            See the user_filter reference at
+            https://doc.dovecot.org/configuration_manual/authentication/ldap_settings_auth/#user-filter
+            in the Dovecot manual.
+          '';
+        };
+
+        passAttrs = mkOption {
+          type = types.str;
+          default = "userPassword=password";
+          description = ''
+            LDAP attributes to be retrieved during passdb lookups.
+
+            See the pass_attrs reference at
+            https://doc.dovecot.org/configuration_manual/authentication/ldap_settings_auth/#pass-attrs
+            in the Dovecot manual.
+          '';
+        };
+
+        passFilter = mkOption {
+          type = types.str;
+          default = "cn=%u";
+          example = "(&(objectClass=inetOrgPerson)(cn=%u))";
+          description = ''
+            Filter for password lookups in Dovecot.
+
+            See the pass_filter reference for
+            https://doc.dovecot.org/configuration_manual/authentication/ldap_settings_auth/#pass-filter
+            in the Dovecot manual.
+          '';
+        };
+      };
+
+      postfix = {
+        filter = mkOption {
+          type = types.str;
+          default = "mail=%s";
+          example = "(&(objectClass=inetOrgPerson)(mail=%s))";
+          description = ''
+            LDAP filter used to search for an account by mail, where
+            <literal>%s</literal> is a substitute for the address in
+            question.
+          '';
+        };
+
+        uidAttribute = mkOption {
+          type = types.str;
+          default = "cn";
+          example = "uid";
+          description = ''
+            The LDAP attribute referencing the account name for a user.
+          '';
+        };
+
+        mailAttribute = mkOption {
+          type = types.str;
+          default = "mail";
+          description = ''
+            The LDAP attribute holding mail addresses for a user.
+          '';
+        };
+      };
+    };
+
     indexDir = mkOption {
       type = types.nullOr types.str;
       default = null;

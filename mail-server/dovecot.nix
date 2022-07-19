@@ -91,6 +91,12 @@ let
   # The assertion garantees there is exactly one Junk mailbox.
   junkMailboxName = if junkMailboxNumber == 1 then builtins.elemAt junkMailboxes 0 else "";
 
+  mkLdapSearchScope = scope: (
+    if scope == "sub" then "subtree"
+    else if scope == "one" then "onelevel"
+    else scope
+  );
+
 in
 {
   config = with cfg; lib.mkIf enable {
@@ -220,6 +226,19 @@ in
           args = ${passwdFile}
         }
 
+        ${lib.optionalString cfg.ldap.enable ''
+        passdb {
+          driver = ldap
+          args = /etc/dovecot/dovecot-ldap.conf.ext
+        }
+
+        userdb {
+          driver = ldap
+          args = /etc/dovecot/dovecot-ldap.conf.ext
+          default_fields = home=/var/vmail/ldap/%u uid=${toString cfg.vmailUID} gid=${toString cfg.vmailUID}
+        }
+        ''}
+
         service auth {
           unix_listener auth {
             mode = 0660
@@ -280,6 +299,37 @@ in
         lda_mailbox_autosubscribe = yes
         lda_mailbox_autocreate = yes
       '';
+    };
+
+    environment.etc = lib.optionalAttrs (cfg.ldap.enable) {
+      "dovecot/dovecot-ldap.conf.ext" = {
+        mode = "0600";
+        uid = config.ids.uids.dovecot2;
+        gid = config.ids.gids.dovecot2;
+        text = ''
+          ldap_version = 3
+          uris = ${lib.concatStringsSep " " cfg.ldap.uris}
+          ${lib.optionalString cfg.ldap.startTls ''
+          tls = yes
+          ''}
+          tls_require_cert = hard
+          tls_ca_cert_file = ${cfg.ldap.tlsCAFile}
+          dn = ${cfg.ldap.bind.dn}
+          dnpass = ${cfg.ldap.bind.password}
+          sasl_bind = no
+          auth_bind = yes
+          base = ${cfg.ldap.searchBase}
+          scope = ${mkLdapSearchScope cfg.ldap.searchScope}
+          ${lib.optionalString (cfg.ldap.dovecot.userAttrs != "") ''
+          user_attrs = ${cfg.ldap.dovecot.user_attrs}
+          ''}
+          user_filter = ${cfg.ldap.dovecot.userFilter}
+          ${lib.optionalString (cfg.ldap.dovecot.passAttrs != "") ''
+          pass_attrs = ${cfg.ldap.dovecot.passAttrs}
+          ''}
+          pass_filter = ${cfg.ldap.dovecot.passFilter}
+        '';
+      };
     };
 
     systemd.services.dovecot2 = {

@@ -133,11 +133,40 @@ let
       smtpd_sasl_security_options = "noanonymous";
       smtpd_sasl_local_domain = "$myhostname";
       smtpd_client_restrictions = "permit_sasl_authenticated,reject";
-      smtpd_sender_login_maps = "hash:/etc/postfix/vaccounts";
+      smtpd_sender_login_maps = "hash:/etc/postfix/vaccounts${lib.optionalString cfg.ldap.enable ",ldap:${ldapSenderLoginMap}"}";
       smtpd_sender_restrictions = "reject_sender_login_mismatch";
       smtpd_recipient_restrictions = "reject_non_fqdn_recipient,reject_unknown_recipient_domain,permit_sasl_authenticated,reject";
       cleanup_service_name = "submission-header-cleanup";
     };
+
+  commonLdapConfig = lib.optionalString (cfg.ldap.enable) ''
+    server_host = ${lib.concatStringsSep " " cfg.ldap.uris}
+    start_tls = ${if cfg.ldap.startTls then "yes" else "no"}
+    version = 3
+    tls_ca_cert_file = ${cfg.ldap.tlsCAFile}
+    tls_require_cert = yes
+
+    search_base = ${cfg.ldap.searchBase}
+    scope = ${cfg.ldap.searchScope}
+
+    bind = yes
+    bind_dn = ${cfg.ldap.bind.dn}
+    bind_pw = ${cfg.ldap.bind.password}
+  '';
+
+  ldapSenderLoginMap = lib.optionalString (cfg.ldap.enable)
+    (pkgs.writeText "ldap-sender-login-map.cf" ''
+      ${commonLdapConfig}
+      query_filter = ${cfg.ldap.postfix.filter}
+      result_attribute = ${cfg.ldap.postfix.uidAttribute}
+    '');
+
+  ldapVirtualMailboxMap = lib.optionalString (cfg.ldap.enable)
+    (pkgs.writeText "ldap-virtual-mailbox-map.cf" ''
+       ${commonLdapConfig}
+       query_filter = ${cfg.ldap.postfix.filter}
+       result_attribute = ${cfg.ldap.postfix.uidAttribute}
+    '');
 in
 {
   config = with cfg; lib.mkIf enable {
@@ -170,7 +199,11 @@ in
         virtual_gid_maps = "static:5000";
         virtual_mailbox_base = mailDirectory;
         virtual_mailbox_domains = vhosts_file;
-        virtual_mailbox_maps = mappedFile "valias";
+        virtual_mailbox_maps = [
+          (mappedFile "valias")
+        ] ++ lib.optionals (cfg.ldap.enable) [
+          "ldap:${ldapVirtualMailboxMap}"
+        ];
         virtual_transport = "lmtp:unix:/run/dovecot2/dovecot-lmtp";
         # Avoid leakage of X-Original-To, X-Delivered-To headers between recipients
         lmtp_destination_recipient_limit = "1";
