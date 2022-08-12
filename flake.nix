@@ -34,6 +34,7 @@
       "external"
       "clamav"
       "multiple"
+      "ldap"
     ];
     genTest = testName: release: {
       "name"= "${testName}-${release.name}";
