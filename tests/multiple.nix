@@ -5,9 +5,9 @@
 let
     hashPassword = password: pkgs.runCommand
       "password-${password}-hashed"
-      { buildInputs = [ pkgs.apacheHttpd ]; }
+      { buildInputs = [ pkgs.mkpasswd ]; inherit password; }
       ''
-        htpasswd -nbB "" "${password}" | cut -d: -f2 > $out
+        mkpasswd -sm bcrypt <<<"$password" > $out
       '';
 
     password = pkgs.writeText "password" "password";

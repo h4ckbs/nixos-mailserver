@@ -96,7 +96,7 @@ D9FE 4119 F082 6F15 93BD  BD36 6162 DBA5 635E A16A
        domains = [ "example.com" "example2.com" ];
        loginAccounts = {
            "user1@example.com" = {
-               # nix run nixpkgs.apacheHttpd -c htpasswd -nbB "" "super secret password" | cut -d: -f2 > /hashed/password/file/location
+               # nix-shell -p mkpasswd --run 'mkpasswd -sm bcrypt' > /hashed/password/file/location
                hashedPasswordFile = "/hashed/password/file/location";
 
                aliases = [

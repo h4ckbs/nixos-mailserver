@@ -458,11 +458,11 @@ mailserver.loginAccounts
 ------------------------
 
 The login account of the domain. Every account is mapped to a unix user,
-e.g. `user1@example.com`. To generate the passwords use `htpasswd` as
+e.g. `user1@example.com`. To generate the passwords use `mkpasswd` as
 follows
 
 ```
-nix run nixpkgs.apacheHttpd -c htpasswd -nbB "" "super secret password" | cut -d: -f2
+nix-shell -p mkpasswd --run 'mkpasswd -sm bcrypt'
 ```
 
 
@@ -496,10 +496,10 @@ Note: Does not allow sending from all addresses of these domains.
 mailserver.loginAccounts.<name>.hashedPassword
 ----------------------------------------------
 
-The user's hashed password. Use `htpasswd` as follows
+The user's hashed password. Use `mkpasswd` as follows
 
 ```
-nix run nixpkgs.apacheHttpd -c htpasswd -nbB "" "super secret password" | cut -d: -f2
+nix-shell -p mkpasswd --run 'mkpasswd -sm bcrypt'
 ```
 
 Warning: this is stored in plaintext in the Nix store!
@@ -513,10 +513,10 @@ Use `hashedPasswordFile` instead.
 mailserver.loginAccounts.<name>.hashedPasswordFile
 --------------------------------------------------
 
-A file containing the user's hashed password. Use `htpasswd` as follows
+A file containing the user's hashed password. Use `mkpasswd` as follows
 
 ```
-nix run nixpkgs.apacheHttpd -c htpasswd -nbB "" "super secret password" | cut -d: -f2
+nix-shell -p mkpasswd --run 'mkpasswd -sm bcrypt'
 ```
 
 

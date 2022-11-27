@@ -70,7 +70,7 @@ these should be the most common ones.
        domains = [ "example.com" ];
 
        # A list of all login accounts. To create the password hashes, use
-       # nix run nixpkgs.apacheHttpd -c htpasswd -nbB "" "super secret password" | cut -d: -f2
+       # nix-shell -p mkpasswd --run 'mkpasswd -sm bcrypt'
        loginAccounts = {
            "user1@example.com" = {
                hashedPasswordFile = "/a/file/containing/a/hashed/password";

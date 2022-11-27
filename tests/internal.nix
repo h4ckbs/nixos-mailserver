@@ -29,8 +29,8 @@ let
 
   hashPassword = password: pkgs.runCommand
     "password-${password}-hashed"
-    { buildInputs = [ pkgs.apacheHttpd ]; } ''
-      htpasswd -nbB "" "${password}" | cut -d: -f2 > $out
+    { buildInputs = [ pkgs.mkpasswd ]; inherit password; } ''
+      mkpasswd -sm bcrypt <<<"$password" > $out
     '';
 
   hashedPasswordFile = hashPassword "my-password";
