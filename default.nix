@@ -79,7 +79,7 @@ in
               ```
 
               Warning: this is stored in plaintext in the Nix store!
-              Use `hashedPasswordFile` instead.
+              Use {option}`mailserver.loginAccounts.<name>.hashedPasswordFile` instead.
             '';
           };
 
@@ -156,7 +156,7 @@ in
             description = ''
               Specifies if the account should be a send-only account.
               Emails sent to send-only accounts will be rejected from
-              unauthorized senders with the sendOnlyRejectMessage
+              unauthorized senders with the `sendOnlyRejectMessage`
               stating the reason.
             '';
           };
@@ -200,7 +200,7 @@ in
       description = ''
         Folder to store search indices. If null, indices are stored
         along with email, which could not necessarily be desirable,
-        especially when the fullTextSearch option is enable since
+        especially when {option}`mailserver.fullTextSearch.enable` is `true` since
         indices it creates are voluminous and do not need to be backed
         up.
 
@@ -242,8 +242,8 @@ in
         default = "no";
         description = ''
           Fail searches when no index is available. If set to
-          <literal>body</literal>, then only body searches (as opposed to
-          header) are affected. If set to <literal>no</literal>, searches may
+          `body`, then only body searches (as opposed to
+          header) are affected. If set to `no`, searches may
           fall back to a very slow brute force search.
         '';
       };
@@ -281,7 +281,7 @@ in
         randomizedDelaySec = mkOption {
           type = types.int;
           default = 1000;
-          description = "Run the maintenance job not exactly at the time specified with <literal>onCalendar</literal>, but plus or minus this many seconds.";
+          description = "Run the maintenance job not exactly at the time specified with `onCalendar`, but plus or minus this many seconds.";
         };
       };
     };
@@ -333,7 +333,7 @@ in
         the value {`"user@example.com" = "user@elsewhere.com";}`
         means that mails to `user@example.com` are forwarded to
         `user@elsewhere.com`. The difference with the
-        `extraVirtualAliases` option is that `user@elsewhere.com`
+        {option}`mailserver.extraVirtualAliases` option is that `user@elsewhere.com`
         can't send mail as `user@example.com`. Also, this option
         allows to forward mails to external addresses.
       '';
@@ -367,7 +367,7 @@ in
       description = ''
         The unix UID of the virtual mail user.  Be mindful that if this is
         changed, you will need to manually adjust the permissions of
-        mailDirectory.
+        `mailDirectory`.
       '';
     };
 
@@ -582,7 +582,7 @@ in
       type = types.str;
       default = "mail";
       description = ''
-
+        The DKIM selector.
       '';
     };
 
@@ -590,7 +590,7 @@ in
       type = types.path;
       default = "/var/dkim";
       description = ''
-
+        The DKIM directory.
       '';
     };
 
@@ -601,7 +601,7 @@ in
             How many bits in generated DKIM keys. RFC6376 advises minimum 1024-bit keys.
 
             If you have already deployed a key with a different number of bits than specified
-            here, then you should use a different selector (dkimSelector). In order to get
+            here, then you should use a different selector ({option}`mailserver.dkimSelector`). In order to get
             this package to generate a key with the new number of bits, you will either have to
             change the selector or delete the old key file.
         '';
@@ -673,7 +673,7 @@ in
         type = types.str;
         example = "ACME Corp.";
         description = ''
-          The name of your organization used in the <literal>org_name</literal> attribute in
+          The name of your organization used in the `org_name` attribute in
           DMARC reports.
         '';
       };
@@ -681,7 +681,7 @@ in
       fromName = mkOption {
         type = types.str;
         default = cfg.dmarcReporting.organizationName;
-        defaultText = literalExpression "organizationName";
+        defaultText = literalMD "{option}`mailserver.dmarcReporting.organizationName`";
         description = ''
           The sender name for DMARC reports. Defaults to the organization name.
         '';
@@ -738,7 +738,7 @@ in
         if (ip == "0.0.0.0" || ip == "::")
         then "127.0.0.1"
         else if isIpv6 ip then "[${ip}]" else ip;
-        defaultText = lib.literalDocBook "computed from <option>config.services.redis.servers.rspamd.bind</option>";
+        defaultText = lib.literalMD "computed from `config.services.redis.servers.rspamd.bind`";
         description = ''
           Address that rspamd should use to contact redis.
         '';
@@ -776,7 +776,7 @@ in
     sendingFqdn = mkOption {
       type = types.str;
       default = cfg.fqdn;
-      defaultText = "config.mailserver.fqdn";
+      defaultText = lib.literalMD "{option}`mailserver.fqdn`";
       example = "myserver.example.com";
       description = ''
         The fully qualified domain name of the mail server used to
@@ -792,7 +792,7 @@ in
 
         This setting allows the server to identify as
         myserver.example.com when forwarding mail, independently of
-        `fqdn` (which, for SSL reasons, should generally be the name
+        {option}`mailserver.fqdn` (which, for SSL reasons, should generally be the name
         to which the user connects).
 
         Set this to the name to which the sending IP's reverse DNS
@@ -864,7 +864,7 @@ in
                 start program = "${pkgs.systemd}/bin/systemctl start rspamd"
                 stop program = "${pkgs.systemd}/bin/systemctl stop rspamd"
         '';
-        defaultText = lib.literalDocBook "see source";
+        defaultText = lib.literalMD "see [source](https://gitlab.com/simple-nixos-mailserver/nixos-mailserver/-/blob/master/default.nix)";
         description = ''
           The configuration used for monitoring via monit.
           Use a mail address that you actively check and set it via 'set alert ...'.
@@ -881,7 +881,8 @@ in
         description = ''
           The location where borg saves the backups.
           This can be a local path or a remote location such as user@host:/path/to/repo.
-          It is exported and thus available as an environment variable to cmdPreexec and cmdPostexec.
+          It is exported and thus available as an environment variable to
+          {option}`mailserver.borgbackup.cmdPreexec` and {option}`mailserver.borgbackup.cmdPostexec`.
         '';
       };
 
@@ -941,7 +942,7 @@ in
           default = "none";
           description = ''
             The backup can be encrypted by choosing any other value than 'none'.
-            When using encryption the password / passphrase must be provided in passphraseFile.
+            When using encryption the password/passphrase must be provided in `passphraseFile`.
           '';
         };
 
@@ -964,6 +965,7 @@ in
       locations = mkOption {
         type = types.listOf types.path;
         default = [cfg.mailDirectory];
+        defaultText = lib.literalExpression "[ config.mailserver.mailDirectory ]";
         description = "The locations that are to be backed up by borg.";
       };
 
@@ -984,9 +986,10 @@ in
         default = null;
         description = ''
           The command to be executed before each backup operation.
-          This is called prior to borg init in the same script that runs borg init and create and cmdPostexec.
-          Example:
-            export BORG_RSH="ssh -i /path/to/private/key"
+          This is called prior to borg init in the same script that runs borg init and create and `cmdPostexec`.
+        '';
+        example = ''
+          export BORG_RSH="ssh -i /path/to/private/key"
         '';
       };
 
@@ -996,7 +999,7 @@ in
         description = ''
           The command to be executed after each backup operation.
           This is called after borg create completed successfully and in the same script that runs
-          cmdPreexec, borg init and create.
+          `cmdPreexec`, borg init and create.
         '';
       };
 
@@ -1009,7 +1012,7 @@ in
         example = true;
         description = ''
           Whether to enable automatic reboot after kernel upgrades.
-          This is to be used in conjunction with system.autoUpgrade.enable = true"
+          This is to be used in conjunction with `system.autoUpgrade.enable = true;`
         '';
       };
       method = mkOption {

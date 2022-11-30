@@ -30,8 +30,8 @@ run tests manually. For instance:
 Contributing to the documentation
 ---------------------------------
 
-The documentation is written in RST, build with Sphinx and published
-by `Read the Docs <https://readthedocs.org/>`_.
+The documentation is written in RST (except option documentation which is in MarkDown),
+built with Sphinx and published by `Read the Docs <https://readthedocs.org/>`_.
 
 For the syntax, see `RST/Sphinx Cheatsheet
 <https://sphinx-tutorial.readthedocs.io/cheatsheet/>`_.
@@ -47,11 +47,11 @@ documentation:
    $ firefox ./_build/html/index.html
 
 Note if you modify some NixOS mailserver options, you would also need
-to regenerate the ``options.rst`` file:
+to regenerate the ``options.md`` file:
 
 ::
 
-   $ nix-shell --run generate-rst-options
+   $ nix-shell --run generate-options
 
 Nixops
 ------

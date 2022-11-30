@@ -1,5 +1,5 @@
 Add Roundcube, a webmail
-=======================
+========================
 
 The NixOS module for roundcube nearly works out of the box with SNM. By
 default, it sets up a nginx virtual host to serve the webmail, other web
