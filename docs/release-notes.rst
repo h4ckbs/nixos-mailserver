@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+NixOS 22.11
+-----------
+
+- Allow Rspamd to send dmarc reporting
+  (`merge request <https://gitlab.com/simple-nixos-mailserver/nixos-mailserver/-/merge_requests/244>`__)
+
 NixOS 22.05
 -----------
 

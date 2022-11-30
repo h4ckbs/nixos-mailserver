@@ -4,19 +4,24 @@
   inputs = {
     utils.url = "github:numtide/flake-utils";
     nixpkgs.url = "flake:nixpkgs/nixos-unstable";
+    nixpkgs-22_11.url = "flake:nixpkgs/nixos-22.11";
     blobs = {
       url = "gitlab:simple-nixos-mailserver/blobs";
       flake = false;
     };
   };
 
-  outputs = { self, utils, blobs, nixpkgs }: let
+  outputs = { self, utils, blobs, nixpkgs, nixpkgs-22_11 }: let
     system = "x86_64-linux";
     pkgs = nixpkgs.legacyPackages.${system};
     releases = [
       {
         name = "unstable";
         pkgs = nixpkgs.legacyPackages.${system};
+      }
+      {
+        name = "22.11";
+        pkgs = nixpkgs-22_11.legacyPackages.${system};
       }
     ];
     testNames = [

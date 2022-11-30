@@ -350,7 +350,7 @@ pkgs.nixosTest {
 
       # TODO put this blocking into the systemd units?
       server.wait_until_succeeds(
-          "set +e; timeout 1 ${nodes.server.pkgs.netcat}/bin/nc -U /run/rspamd/rspamd-milter.sock < /dev/null; [ $? -eq 124 ]"
+          "set +e; timeout 1 ${nodes.server.nixpkgs.pkgs.netcat}/bin/nc -U /run/rspamd/rspamd-milter.sock < /dev/null; [ $? -eq 124 ]"
       )
 
       client.execute("cp -p /etc/root/.* ~/")
