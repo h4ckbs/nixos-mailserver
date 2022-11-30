@@ -25,7 +25,7 @@ mailserver.domains
 
 The domains that this mail server serves.
 
-- type: ``list of strings``
+- type: ``list of string``
 - default: ``[]``
 - example: ``['example.com']``
 
@@ -135,7 +135,7 @@ example all mails for `multi@example.com` will be forwarded to both
 `user1@example.com` and `user2@example.com`.
 
 
-- type: ``attribute set of Login Account or non-empty list of Login Accountss``
+- type: ``attribute set of ((Login Account) or non-empty (list of (Login Account)))``
 - default: ``{}``
 - example: ``{'abuse@example.com': 'user1@example.com', 'info@example.com': 'user1@example.com', 'multi@example.com': ['user1@example.com', 'user2@example.com'], 'postmaster@example.com': 'user1@example.com'}``
 
@@ -152,7 +152,7 @@ can't send mail as `user@example.com`. Also, this option
 allows to forward mails to external addresses.
 
 
-- type: ``attribute set of list of strings or strings``
+- type: ``attribute set of ((list of string) or string)``
 - default: ``{}``
 - example: ``{'user@example.com': 'user@elsewhere.com'}``
 
@@ -260,7 +260,7 @@ The mailboxes for dovecot.
 Depending on the mail client used it might be necessary to change some mailbox's name.
 
 
-- type: ``unspecified``
+- type: ``unspecified value``
 - default: ``{'Drafts': {'auto': 'subscribe', 'specialUse': 'Drafts'}, 'Junk': {'auto': 'subscribe', 'specialUse': 'Junk'}, 'Sent': {'auto': 'subscribe', 'specialUse': 'Sent'}, 'Trash': {'auto': 'no', 'specialUse': 'Trash'}}``
 
 
@@ -359,7 +359,7 @@ Use if a spammer has found email addresses in a catchall domain but you do
 not want to disable the catchall.
 
 
-- type: ``list of strings``
+- type: ``list of string``
 - default: ``[]``
 - example: ``['sales@example.com', 'info@example.com']``
 
@@ -371,7 +371,7 @@ Reject emails from these addresses from unauthorized senders.
 Use if a spammer is using the same domain or the same sender over and over.
 
 
-- type: ``list of strings``
+- type: ``list of string``
 - default: ``[]``
 - example: ``['@example.com', 'spammer@example.net']``
 
@@ -508,7 +508,7 @@ nix-shell -p mkpasswd --run 'mkpasswd -sm bcrypt'
 ```
 
 
-- type: ``attribute set of submodules``
+- type: ``attribute set of (submodule)``
 - default: ``{}``
 - example: ``{'user1': {'hashedPassword': '$6$evQJs5CFQyPAW09S$Cn99Y8.QjZ2IBnSu4qf1vBxDRWkaIZWOtmu1Ddsm3.H3CFpeVc0JU4llIq8HQXgeatvYhh5O33eWG3TSpjzu6/'}, 'user2': {'hashedPassword': '$6$oE0ZNv2n7Vk9gOf$9xcZWCCLGdMflIfuA0vR1Q1Xblw6RZqPrP94mEit2/81/7AKj2bqUai5yPyWE.QYPyv6wLMHZvjw3Rlg7yTCD/'}}``
 
@@ -521,7 +521,7 @@ Note: Use list entries like "@example.com" to create a catchAll
 that allows sending from all email addresses in these domain.
 
 
-- type: ``list of strings``
+- type: ``list of string``
 - default: ``[]``
 - example: ``['abuse@example.com', 'postmaster@example.com']``
 
@@ -533,7 +533,7 @@ For which domains should this account act as a catch all?
 Note: Does not allow sending from all addresses of these domains.
 
 
-- type: ``list of value "example.com" (singular enum)s``
+- type: ``list of value "example.com" (singular enum)``
 - default: ``[]``
 - example: ``['example.com', 'example2.com']``
 
@@ -670,7 +670,7 @@ mailserver.certificateDomains
 
 Secondary domains and subdomains for which it is necessary to generate a certificate.
 
-- type: ``list of strings``
+- type: ``list of string``
 - default: ``[]``
 - example: ``['imap.example.com', 'pop3.example.com']``
 
@@ -879,7 +879,7 @@ mailserver.fullTextSearch.autoIndexExclude
 Mailboxes to exclude from automatic indexing.
 
 
-- type: ``list of strings``
+- type: ``list of string``
 - default: ``[]``
 - example: ``['\\Trash', 'SomeFolder', 'Other/*']``
 
@@ -1082,7 +1082,7 @@ Note that the intervals also have to exist in configuration
 as retain options.
 
 
-- type: ``attribute set of strings``
+- type: ``attribute set of string``
 - default: ``{'daily': '30  3  *  *  *', 'hourly': ' 0  *  *  *  *', 'weekly': ' 0  5  *  *  0'}``
 
 
@@ -1238,7 +1238,7 @@ mailserver.borgbackup.extraArgumentsForCreate
 
 Additional arguments to add to the borg create command line e.g. '--stats'.
 
-- type: ``list of strings``
+- type: ``list of string``
 - default: ``[]``
 
 
@@ -1248,7 +1248,7 @@ mailserver.borgbackup.extraArgumentsForInit
 
 Additional arguments to add to the borg init command line.
 
-- type: ``list of strings``
+- type: ``list of string``
 - default: ``['--critical']``
 
 
@@ -1268,7 +1268,7 @@ mailserver.borgbackup.locations
 
 The locations that are to be backed up by borg.
 
-- type: ``list of paths``
+- type: ``list of path``
 - default: ``['/var/vmail']``
 
 
