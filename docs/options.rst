@@ -15,73 +15,8 @@ intended be used for development purposes only, you probably don't want
 to enable this unless you're hacking on nixos-mailserver.
 
 
-- Type: ``boolean``
-- Default: ``False``
-
-
-mailserver.dmarcReporting.domain
---------------------------------
-
-The domain from which outgoing DMARC reports are served.
-
-
-- Type: ``value "example.com" (singular enum)``
-
-
-
-mailserver.dmarcReporting.email
--------------------------------
-
-None
-
-- Type: ``string``
-- Default: ``dmarc-noreply@example.com``
-
-
-mailserver.dmarcReporting.enable
---------------------------------
-
-Whether to send out aggregated, daily DMARC reports in response to incoming
-mail, when the sender domain defines a DMARC policy including the RUA tag.
-
-This is helpful for the mail ecosystem, because it allows third parties to
-get notified about SPF/DKIM violations originating from their sender domains.
-
-See https://rspamd.com/doc/modules/dmarc.html#reporting
-
-
-- Type: ``boolean``
-- Default: ``False``
-
-
-mailserver.dmarcReporting.fromName
-----------------------------------
-
-The sender name for DMARC reports. Defaults to the organization name.
-
-
-- Type: ``string``
-- Default: ``Example Corp``
-
-
-mailserver.dmarcReporting.localpart
------------------------------------
-
-The local part of the email address used for outgoing DMARC reports.
-
-
-- Type: ``string``
-- Default: ``dmarc-noreply``
-
-
-mailserver.dmarcReporting.organizationName
-------------------------------------------
-
-The name of your organization used in the <literal>org_name</literal> attribute in
-DMARC reports.
-
-
-- Type: ``string``
+- type: ``boolean``
+- default: ``False``
 
 
 
@@ -90,8 +25,9 @@ mailserver.domains
 
 The domains that this mail server serves.
 
-- Type: ``list of strings``
-- Default: ``[]``
+- type: ``list of strings``
+- default: ``[]``
+- example: ``['example.com']``
 
 
 mailserver.enable
@@ -99,8 +35,9 @@ mailserver.enable
 
 Whether to enable nixos-mailserver.
 
-- Type: ``boolean``
-- Default: ``False``
+- type: ``boolean``
+- default: ``False``
+- example: ``True``
 
 
 mailserver.enableImap
@@ -109,8 +46,9 @@ mailserver.enableImap
 Whether to enable IMAP with STARTTLS on port 143.
 
 
-- Type: ``boolean``
-- Default: ``True``
+- type: ``boolean``
+- default: ``True``
+
 
 
 mailserver.enableImapSsl
@@ -119,8 +57,9 @@ mailserver.enableImapSsl
 Whether to enable IMAP with TLS in wrapper-mode on port 993.
 
 
-- Type: ``boolean``
-- Default: ``True``
+- type: ``boolean``
+- default: ``True``
+
 
 
 mailserver.enableManageSieve
@@ -133,8 +72,9 @@ The ManageSieve protocol allows users to manage their Sieve scripts on
 a remote server with a supported client, including Thunderbird.
 
 
-- Type: ``boolean``
-- Default: ``False``
+- type: ``boolean``
+- default: ``False``
+
 
 
 mailserver.enablePop3
@@ -143,8 +83,9 @@ mailserver.enablePop3
 Whether to enable POP3 with STARTTLS on port on port 110.
 
 
-- Type: ``boolean``
-- Default: ``False``
+- type: ``boolean``
+- default: ``False``
+
 
 
 mailserver.enablePop3Ssl
@@ -153,8 +94,9 @@ mailserver.enablePop3Ssl
 Whether to enable POP3 with TLS in wrapper-mode on port 995.
 
 
-- Type: ``boolean``
-- Default: ``False``
+- type: ``boolean``
+- default: ``False``
+
 
 
 mailserver.enableSubmission
@@ -163,8 +105,9 @@ mailserver.enableSubmission
 Whether to enable SMTP with STARTTLS on port 587.
 
 
-- Type: ``boolean``
-- Default: ``True``
+- type: ``boolean``
+- default: ``True``
+
 
 
 mailserver.enableSubmissionSsl
@@ -173,8 +116,9 @@ mailserver.enableSubmissionSsl
 Whether to enable SMTP with TLS in wrapper-mode on port 465.
 
 
-- Type: ``boolean``
-- Default: ``True``
+- type: ``boolean``
+- default: ``True``
+
 
 
 mailserver.extraVirtualAliases
@@ -191,8 +135,9 @@ example all mails for `multi@example.com` will be forwarded to both
 `user1@example.com` and `user2@example.com`.
 
 
-- Type: ``attribute set of Login Account or non-empty list of Login Accountss``
-- Default: ``{}``
+- type: ``attribute set of Login Account or non-empty list of Login Accountss``
+- default: ``{}``
+- example: ``{'abuse@example.com': 'user1@example.com', 'info@example.com': 'user1@example.com', 'multi@example.com': ['user1@example.com', 'user2@example.com'], 'postmaster@example.com': 'user1@example.com'}``
 
 
 mailserver.forwards
@@ -207,8 +152,9 @@ can't send mail as `user@example.com`. Also, this option
 allows to forward mails to external addresses.
 
 
-- Type: ``attribute set of list of strings or strings``
-- Default: ``{}``
+- type: ``attribute set of list of strings or strings``
+- default: ``{}``
+- example: ``{'user@example.com': 'user@elsewhere.com'}``
 
 
 mailserver.fqdn
@@ -216,8 +162,9 @@ mailserver.fqdn
 
 The fully qualified domain name of the mail server.
 
-- Type: ``string``
+- type: ``string``
 
+- example: ``mx.example.com``
 
 
 mailserver.hierarchySeparator
@@ -231,8 +178,9 @@ This does not determine the way your mails are stored on disk.
 See https://wiki.dovecot.org/Namespaces for details.
 
 
-- Type: ``string``
-- Default: ``.``
+- type: ``string``
+- default: ``.``
+
 
 
 mailserver.indexDir
@@ -253,8 +201,9 @@ https://doc.dovecot.org/configuration_manual/mail_location/#variables
 for details.
 
 
-- Type: ``null or string``
-- Default: ``None``
+- type: ``null or string``
+- default: ``None``
+- example: ``/var/lib/dovecot/indices``
 
 
 mailserver.keyFile
@@ -264,8 +213,9 @@ Scheme 1)
 Location of the key file
 
 
-- Type: ``path``
+- type: ``path``
 
+- example: ``/root/mail-server.key``
 
 
 mailserver.lmtpSaveToDetailMailbox
@@ -276,8 +226,9 @@ mailbox matching the string after the "+"?  For example,
 user1+test@example.com would be filed into the mailbox "test".
 
 
-- Type: ``one of "yes", "no"``
-- Default: ``yes``
+- type: ``one of "yes", "no"``
+- default: ``yes``
+
 
 
 mailserver.localDnsResolver
@@ -286,8 +237,9 @@ mailserver.localDnsResolver
 Runs a local DNS resolver (kresd) as recommended when running rspamd. This prevents your log file from filling up with rspamd_monitored_dns_mon entries.
 
 
-- Type: ``boolean``
-- Default: ``True``
+- type: ``boolean``
+- default: ``True``
+
 
 
 mailserver.mailDirectory
@@ -296,8 +248,9 @@ mailserver.mailDirectory
 Where to store the mail.
 
 
-- Type: ``path``
-- Default: ``/var/vmail``
+- type: ``path``
+- default: ``/var/vmail``
+
 
 
 mailserver.mailboxes
@@ -307,8 +260,9 @@ The mailboxes for dovecot.
 Depending on the mail client used it might be necessary to change some mailbox's name.
 
 
-- Type: ``unspecified``
-- Default: ``{'Drafts': {'auto': 'subscribe', 'specialUse': 'Drafts'}, 'Junk': {'auto': 'subscribe', 'specialUse': 'Junk'}, 'Sent': {'auto': 'subscribe', 'specialUse': 'Sent'}, 'Trash': {'auto': 'no', 'specialUse': 'Trash'}}``
+- type: ``unspecified``
+- default: ``{'Drafts': {'auto': 'subscribe', 'specialUse': 'Drafts'}, 'Junk': {'auto': 'subscribe', 'specialUse': 'Junk'}, 'Sent': {'auto': 'subscribe', 'specialUse': 'Sent'}, 'Trash': {'auto': 'no', 'specialUse': 'Trash'}}``
+
 
 
 mailserver.maxConnectionsPerUser
@@ -319,8 +273,9 @@ E.g. a value of 50 allows for 50 IMAP and 50 POP3 connections at the same
 time for a single user.
 
 
-- Type: ``signed integer``
-- Default: ``100``
+- type: ``signed integer``
+- default: ``100``
+
 
 
 mailserver.messageSizeLimit
@@ -328,8 +283,9 @@ mailserver.messageSizeLimit
 
 Message size limit enforced by Postfix.
 
-- Type: ``signed integer``
-- Default: ``20971520``
+- type: ``signed integer``
+- default: ``20971520``
+- example: ``52428800``
 
 
 mailserver.openFirewall
@@ -337,8 +293,9 @@ mailserver.openFirewall
 
 Automatically open ports in the firewall.
 
-- Type: ``boolean``
-- Default: ``True``
+- type: ``boolean``
+- default: ``True``
+
 
 
 mailserver.policydSPFExtraConfig
@@ -348,8 +305,14 @@ Extra configuration options for policyd-spf. This can be use to among
 other things skip spf checking for some IP addresses.
 
 
-- Type: ``strings concatenated with "\n"``
-- Default: ``""``
+- type: ``strings concatenated with "\n"``
+- default: ``""``
+- example: 
+.. code::
+
+  skip_addresses = 127.0.0.0/8,::ffff:127.0.0.0/104,::1
+
+
 
 
 mailserver.rebootAfterKernelUpgrade.enable
@@ -359,8 +322,9 @@ Whether to enable automatic reboot after kernel upgrades.
 This is to be used in conjunction with system.autoUpgrade.enable = true"
 
 
-- Type: ``boolean``
-- Default: ``False``
+- type: ``boolean``
+- default: ``False``
+- example: ``True``
 
 
 mailserver.rebootAfterKernelUpgrade.method
@@ -371,8 +335,9 @@ It is recommended to use the default value because the quicker kexec reboot has 
 Also if your server is running in a virtual machine the regular reboot will already be very quick.
 
 
-- Type: ``one of "reboot", "systemctl kexec"``
-- Default: ``reboot``
+- type: ``one of "reboot", "systemctl kexec"``
+- default: ``reboot``
+
 
 
 mailserver.recipientDelimiter
@@ -381,8 +346,9 @@ mailserver.recipientDelimiter
 Configure the recipient delimiter.
 
 
-- Type: ``string``
-- Default: ``+``
+- type: ``string``
+- default: ``+``
+
 
 
 mailserver.rejectRecipients
@@ -393,8 +359,9 @@ Use if a spammer has found email addresses in a catchall domain but you do
 not want to disable the catchall.
 
 
-- Type: ``list of strings``
-- Default: ``[]``
+- type: ``list of strings``
+- default: ``[]``
+- example: ``['sales@example.com', 'info@example.com']``
 
 
 mailserver.rejectSender
@@ -404,8 +371,9 @@ Reject emails from these addresses from unauthorized senders.
 Use if a spammer is using the same domain or the same sender over and over.
 
 
-- Type: ``list of strings``
-- Default: ``[]``
+- type: ``list of strings``
+- default: ``[]``
+- example: ``['@example.com', 'spammer@example.net']``
 
 
 mailserver.rewriteMessageId
@@ -416,8 +384,9 @@ Please be aware that this may cause problems with some mail clients
 relying on the original Message-ID.
 
 
-- Type: ``boolean``
-- Default: ``False``
+- type: ``boolean``
+- default: ``False``
+
 
 
 mailserver.sendingFqdn
@@ -443,8 +412,9 @@ Set this to the name to which the sending IP's reverse DNS
 resolves.
 
 
-- Type: ``string``
-- Default: ``config.mailserver.fqdn``
+- type: ``string``
+- default: ``config.mailserver.fqdn``
+- example: ``myserver.example.com``
 
 
 mailserver.sieveDirectory
@@ -453,8 +423,9 @@ mailserver.sieveDirectory
 Where to store the sieve scripts.
 
 
-- Type: ``path``
-- Default: ``/var/sieve``
+- type: ``path``
+- default: ``/var/sieve``
+
 
 
 mailserver.useFsLayout
@@ -468,8 +439,9 @@ Sets whether dovecot should organize mail in subdirectories:
 See https://wiki2.dovecot.org/MailboxFormat/Maildir for details.
 
 
-- Type: ``boolean``
-- Default: ``False``
+- type: ``boolean``
+- default: ``False``
+
 
 
 mailserver.virusScanning
@@ -479,8 +451,9 @@ Whether to activate virus scanning. Note that virus scanning is _very_
 expensive memory wise.
 
 
-- Type: ``boolean``
-- Default: ``False``
+- type: ``boolean``
+- default: ``False``
+
 
 
 mailserver.vmailGroupName
@@ -490,8 +463,9 @@ The user name and group name of the user that owns the directory where all
 the mail is stored.
 
 
-- Type: ``string``
-- Default: ``virtualMail``
+- type: ``string``
+- default: ``virtualMail``
+
 
 
 mailserver.vmailUID
@@ -502,8 +476,9 @@ changed, you will need to manually adjust the permissions of
 mailDirectory.
 
 
-- Type: ``signed integer``
-- Default: ``5000``
+- type: ``signed integer``
+- default: ``5000``
+
 
 
 mailserver.vmailUserName
@@ -513,8 +488,9 @@ The user name and group name of the user that owns the directory where all
 the mail is stored.
 
 
-- Type: ``string``
-- Default: ``virtualMail``
+- type: ``string``
+- default: ``virtualMail``
+
 
 mailserver.loginAccount
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -532,8 +508,9 @@ nix-shell -p mkpasswd --run 'mkpasswd -sm bcrypt'
 ```
 
 
-- Type: ``attribute set of submodules``
-- Default: ``{}``
+- type: ``attribute set of submodules``
+- default: ``{}``
+- example: ``{'user1': {'hashedPassword': '$6$evQJs5CFQyPAW09S$Cn99Y8.QjZ2IBnSu4qf1vBxDRWkaIZWOtmu1Ddsm3.H3CFpeVc0JU4llIq8HQXgeatvYhh5O33eWG3TSpjzu6/'}, 'user2': {'hashedPassword': '$6$oE0ZNv2n7Vk9gOf$9xcZWCCLGdMflIfuA0vR1Q1Xblw6RZqPrP94mEit2/81/7AKj2bqUai5yPyWE.QYPyv6wLMHZvjw3Rlg7yTCD/'}}``
 
 
 mailserver.loginAccounts.<name>.aliases
@@ -544,8 +521,9 @@ Note: Use list entries like "@example.com" to create a catchAll
 that allows sending from all email addresses in these domain.
 
 
-- Type: ``list of strings``
-- Default: ``[]``
+- type: ``list of strings``
+- default: ``[]``
+- example: ``['abuse@example.com', 'postmaster@example.com']``
 
 
 mailserver.loginAccounts.<name>.catchAll
@@ -555,8 +533,9 @@ For which domains should this account act as a catch all?
 Note: Does not allow sending from all addresses of these domains.
 
 
-- Type: ``list of value "example.com" (singular enum)s``
-- Default: ``[]``
+- type: ``list of value "example.com" (singular enum)s``
+- default: ``[]``
+- example: ``['example.com', 'example2.com']``
 
 
 mailserver.loginAccounts.<name>.hashedPassword
@@ -572,8 +551,9 @@ Warning: this is stored in plaintext in the Nix store!
 Use `hashedPasswordFile` instead.
 
 
-- Type: ``null or string``
-- Default: ``None``
+- type: ``null or string``
+- default: ``None``
+- example: ``$6$evQJs5CFQyPAW09S$Cn99Y8.QjZ2IBnSu4qf1vBxDRWkaIZWOtmu1Ddsm3.H3CFpeVc0JU4llIq8HQXgeatvYhh5O33eWG3TSpjzu6/``
 
 
 mailserver.loginAccounts.<name>.hashedPasswordFile
@@ -586,8 +566,9 @@ nix-shell -p mkpasswd --run 'mkpasswd -sm bcrypt'
 ```
 
 
-- Type: ``null or path``
-- Default: ``None``
+- type: ``null or path``
+- default: ``None``
+- example: ``/run/keys/user1-passwordhash``
 
 
 mailserver.loginAccounts.<name>.name
@@ -595,8 +576,9 @@ mailserver.loginAccounts.<name>.name
 
 Username
 
-- Type: ``string``
+- type: ``string``
 
+- example: ``user1@example.com``
 
 
 mailserver.loginAccounts.<name>.quota
@@ -606,8 +588,9 @@ Per user quota rules. Accepted sizes are `xx k/M/G/T` with the
 obvious meaning. Leave blank for the standard quota `100G`.
 
 
-- Type: ``null or string``
-- Default: ``None``
+- type: ``null or string``
+- default: ``None``
+- example: ``2G``
 
 
 mailserver.loginAccounts.<name>.sendOnly
@@ -619,8 +602,9 @@ unauthorized senders with the sendOnlyRejectMessage
 stating the reason.
 
 
-- Type: ``boolean``
-- Default: ``False``
+- type: ``boolean``
+- default: ``False``
+
 
 
 mailserver.loginAccounts.<name>.sendOnlyRejectMessage
@@ -631,8 +615,9 @@ sent to a send-only account. Only used if the account is marked
 as send-only.
 
 
-- Type: ``string``
-- Default: ``This account cannot receive emails.``
+- type: ``string``
+- default: ``This account cannot receive emails.``
+
 
 
 mailserver.loginAccounts.<name>.sieveScript
@@ -641,8 +626,26 @@ mailserver.loginAccounts.<name>.sieveScript
 Per-user sieve script.
 
 
-- Type: ``null or strings concatenated with "\n"``
-- Default: ``None``
+- type: ``null or strings concatenated with "\n"``
+- default: ``None``
+- example: 
+.. code::
+
+  require ["fileinto", "mailbox"];
+
+  if address :is "from" "gitlab@mg.gitlab.com" {
+    fileinto :create "GitLab";
+    stop;
+  }
+
+  # This must be the last rule, it will check if list-id is set, and
+  # file the message into the Lists folder for further investigation
+  elsif header :matches "list-id" "<?*>" {
+    fileinto :create "Lists";
+    stop;
+  }
+
+
 
 mailserver.certificate
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -657,8 +660,9 @@ hardcoded to "cert-DOMAIN.pem" and "key-DOMAIN.pem" and the
 certificate is valid for 10 years.
 
 
-- Type: ``path``
-- Default: ``/var/certs``
+- type: ``path``
+- default: ``/var/certs``
+
 
 
 mailserver.certificateDomains
@@ -666,8 +670,9 @@ mailserver.certificateDomains
 
 Secondary domains and subdomains for which it is necessary to generate a certificate.
 
-- Type: ``list of strings``
-- Default: ``[]``
+- type: ``list of strings``
+- default: ``[]``
+- example: ``['imap.example.com', 'pop3.example.com']``
 
 
 mailserver.certificateFile
@@ -677,8 +682,9 @@ Scheme 1)
 Location of the certificate
 
 
-- Type: ``path``
+- type: ``path``
 
+- example: ``/root/mail-server.crt``
 
 
 mailserver.certificateScheme
@@ -695,8 +701,9 @@ Certificate Files. There are three options for these.
    on how to set up the domain records, see the guide in the readme.
 
 
-- Type: ``one of 1, 2, 3``
-- Default: ``2``
+- type: ``one of 1, 2, 3``
+- default: ``2``
+
 
 mailserver.dkim
 ~~~~~~~~~~~~~~~
@@ -710,8 +717,9 @@ DKIM canonicalization algorithm for message bodies.
 See https://datatracker.ietf.org/doc/html/rfc6376/#section-3.4 for details.
 
 
-- Type: ``one of "relaxed", "simple"``
-- Default: ``relaxed``
+- type: ``one of "relaxed", "simple"``
+- default: ``relaxed``
+
 
 
 mailserver.dkimHeaderCanonicalization
@@ -722,8 +730,9 @@ DKIM canonicalization algorithm for message headers.
 See https://datatracker.ietf.org/doc/html/rfc6376/#section-3.4 for details.
 
 
-- Type: ``one of "relaxed", "simple"``
-- Default: ``relaxed``
+- type: ``one of "relaxed", "simple"``
+- default: ``relaxed``
+
 
 
 mailserver.dkimKeyBits
@@ -737,8 +746,9 @@ this package to generate a key with the new number of bits, you will either have
 change the selector or delete the old key file.
 
 
-- Type: ``signed integer``
-- Default: ``1024``
+- type: ``signed integer``
+- default: ``1024``
+
 
 
 mailserver.dkimKeyDirectory
@@ -747,8 +757,9 @@ mailserver.dkimKeyDirectory
 
 
 
-- Type: ``path``
-- Default: ``/var/dkim``
+- type: ``path``
+- default: ``/var/dkim``
+
 
 
 mailserver.dkimSelector
@@ -757,8 +768,9 @@ mailserver.dkimSelector
 
 
 
-- Type: ``string``
-- Default: ``mail``
+- type: ``string``
+- default: ``mail``
+
 
 
 mailserver.dkimSigning
@@ -767,8 +779,85 @@ mailserver.dkimSigning
 Whether to activate dkim signing.
 
 
-- Type: ``boolean``
-- Default: ``True``
+- type: ``boolean``
+- default: ``True``
+
+
+mailserver.dmarcReporting
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+mailserver.dmarcReporting.domain
+--------------------------------
+
+The domain from which outgoing DMARC reports are served.
+
+
+- type: ``value "example.com" (singular enum)``
+
+- example: ``example.com``
+
+
+mailserver.dmarcReporting.email
+-------------------------------
+
+The email address used for outgoing DMARC reports. Read-only.
+
+
+- type: ``string``
+- default: ``"${localpart}@${domain}"``
+
+
+
+mailserver.dmarcReporting.enable
+--------------------------------
+
+Whether to send out aggregated, daily DMARC reports in response to incoming
+mail, when the sender domain defines a DMARC policy including the RUA tag.
+
+This is helpful for the mail ecosystem, because it allows third parties to
+get notified about SPF/DKIM violations originating from their sender domains.
+
+See https://rspamd.com/doc/modules/dmarc.html#reporting
+
+
+- type: ``boolean``
+- default: ``False``
+
+
+
+mailserver.dmarcReporting.fromName
+----------------------------------
+
+The sender name for DMARC reports. Defaults to the organization name.
+
+
+- type: ``string``
+- default: ``organizationName``
+
+
+
+mailserver.dmarcReporting.localpart
+-----------------------------------
+
+The local part of the email address used for outgoing DMARC reports.
+
+
+- type: ``string``
+- default: ``dmarc-noreply``
+- example: ``dmarc-report``
+
+
+mailserver.dmarcReporting.organizationName
+------------------------------------------
+
+The name of your organization used in the <literal>org_name</literal> attribute in
+DMARC reports.
+
+
+- type: ``string``
+
+- example: ``ACME Corp.``
 
 mailserver.fullTextSearch
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -779,8 +868,9 @@ mailserver.fullTextSearch.autoIndex
 
 Enable automatic indexing of messages as they are received or modified.
 
-- Type: ``boolean``
-- Default: ``True``
+- type: ``boolean``
+- default: ``True``
+
 
 
 mailserver.fullTextSearch.autoIndexExclude
@@ -789,8 +879,9 @@ mailserver.fullTextSearch.autoIndexExclude
 Mailboxes to exclude from automatic indexing.
 
 
-- Type: ``list of strings``
-- Default: ``[]``
+- type: ``list of strings``
+- default: ``[]``
+- example: ``['\\Trash', 'SomeFolder', 'Other/*']``
 
 
 mailserver.fullTextSearch.enable
@@ -798,8 +889,9 @@ mailserver.fullTextSearch.enable
 
 Whether to enable Full text search indexing with xapian. This has significant performance and disk space cost..
 
-- Type: ``boolean``
-- Default: ``False``
+- type: ``boolean``
+- default: ``False``
+- example: ``True``
 
 
 mailserver.fullTextSearch.enforced
@@ -811,8 +903,9 @@ header) are affected. If set to <literal>no</literal>, searches may
 fall back to a very slow brute force search.
 
 
-- Type: ``one of "yes", "no", "body"``
-- Default: ``no``
+- type: ``one of "yes", "no", "body"``
+- default: ``no``
+
 
 
 mailserver.fullTextSearch.indexAttachments
@@ -820,8 +913,9 @@ mailserver.fullTextSearch.indexAttachments
 
 Also index text-only attachements. Binary attachements are never indexed.
 
-- Type: ``boolean``
-- Default: ``False``
+- type: ``boolean``
+- default: ``False``
+
 
 
 mailserver.fullTextSearch.maintenance.enable
@@ -829,8 +923,9 @@ mailserver.fullTextSearch.maintenance.enable
 
 Regularly optmize indices, as recommended by upstream.
 
-- Type: ``boolean``
-- Default: ``True``
+- type: ``boolean``
+- default: ``True``
+
 
 
 mailserver.fullTextSearch.maintenance.onCalendar
@@ -838,8 +933,9 @@ mailserver.fullTextSearch.maintenance.onCalendar
 
 When to run the maintenance job. See systemd.time(7) for more information about the format.
 
-- Type: ``string``
-- Default: ``daily``
+- type: ``string``
+- default: ``daily``
+
 
 
 mailserver.fullTextSearch.maintenance.randomizedDelaySec
@@ -847,8 +943,9 @@ mailserver.fullTextSearch.maintenance.randomizedDelaySec
 
 Run the maintenance job not exactly at the time specified with <literal>onCalendar</literal>, but plus or minus this many seconds.
 
-- Type: ``signed integer``
-- Default: ``1000``
+- type: ``signed integer``
+- default: ``1000``
+
 
 
 mailserver.fullTextSearch.maxSize
@@ -856,8 +953,9 @@ mailserver.fullTextSearch.maxSize
 
 Size of the largest n-gram to index.
 
-- Type: ``signed integer``
-- Default: ``20``
+- type: ``signed integer``
+- default: ``20``
+
 
 
 mailserver.fullTextSearch.memoryLimit
@@ -865,8 +963,9 @@ mailserver.fullTextSearch.memoryLimit
 
 Memory limit for the indexer process, in MiB. If null, leaves the default (which is rather low), and if 0, no limit.
 
-- Type: ``null or signed integer``
-- Default: ``None``
+- type: ``null or signed integer``
+- default: ``None``
+- example: ``2000``
 
 
 mailserver.fullTextSearch.minSize
@@ -874,8 +973,9 @@ mailserver.fullTextSearch.minSize
 
 Size of the smallest n-gram to index.
 
-- Type: ``signed integer``
-- Default: ``2``
+- type: ``signed integer``
+- default: ``2``
+
 
 mailserver.redis
 ~~~~~~~~~~~~~~~~
@@ -887,8 +987,9 @@ mailserver.redis.address
 Address that rspamd should use to contact redis.
 
 
-- Type: ``string``
-- Default: computed from <option>config.services.redis.servers.rspamd.bind</option>
+- type: ``string``
+- default: computed from <option>config.services.redis.servers.rspamd.bind</option>
+
 
 
 mailserver.redis.password
@@ -897,8 +998,9 @@ mailserver.redis.password
 Password that rspamd should use to contact redis, or null if not required.
 
 
-- Type: ``null or string``
-- Default: ``config.services.redis.servers.rspamd.requirePass``
+- type: ``null or string``
+- default: ``config.services.redis.servers.rspamd.requirePass``
+
 
 
 mailserver.redis.port
@@ -907,8 +1009,9 @@ mailserver.redis.port
 Port that rspamd should use to contact redis.
 
 
-- Type: ``16 bit unsigned integer; between 0 and 65535 (both inclusive)``
-- Default: ``config.services.redis.servers.rspamd.port``
+- type: ``16 bit unsigned integer; between 0 and 65535 (both inclusive)``
+- default: ``config.services.redis.servers.rspamd.port``
+
 
 mailserver.monitoring
 ~~~~~~~~~~~~~~~~~~~~~
@@ -920,7 +1023,8 @@ mailserver.monitoring.alertAddress
 The email address to send alerts to.
 
 
-- Type: ``string``
+- type: ``string``
+
 
 
 
@@ -931,8 +1035,9 @@ The configuration used for monitoring via monit.
 Use a mail address that you actively check and set it via 'set alert ...'.
 
 
-- Type: ``string``
-- Default: see source
+- type: ``string``
+- default: see source
+
 
 
 mailserver.monitoring.enable
@@ -940,8 +1045,9 @@ mailserver.monitoring.enable
 
 Whether to enable monitoring via monit.
 
-- Type: ``boolean``
-- Default: ``False``
+- type: ``boolean``
+- default: ``False``
+- example: ``True``
 
 mailserver.backup
 ~~~~~~~~~~~~~~~~~
@@ -952,8 +1058,9 @@ mailserver.backup.cmdPostexec
 
 The command to be executed after each backup operation. This is wrapped in a shell script to be called by rsnapshot.
 
-- Type: ``null or string``
-- Default: ``None``
+- type: ``null or string``
+- default: ``None``
+
 
 
 mailserver.backup.cmdPreexec
@@ -962,8 +1069,9 @@ mailserver.backup.cmdPreexec
 The command to be executed before each backup operation. This is wrapped in a shell script to be called by rsnapshot.
 
 
-- Type: ``null or string``
-- Default: ``None``
+- type: ``null or string``
+- default: ``None``
+
 
 
 mailserver.backup.cronIntervals
@@ -974,8 +1082,9 @@ Note that the intervals also have to exist in configuration
 as retain options.
 
 
-- Type: ``attribute set of strings``
-- Default: ``{'daily': '30  3  *  *  *', 'hourly': ' 0  *  *  *  *', 'weekly': ' 0  5  *  *  0'}``
+- type: ``attribute set of strings``
+- default: ``{'daily': '30  3  *  *  *', 'hourly': ' 0  *  *  *  *', 'weekly': ' 0  5  *  *  0'}``
+
 
 
 mailserver.backup.enable
@@ -983,8 +1092,9 @@ mailserver.backup.enable
 
 Whether to enable backup via rsnapshot.
 
-- Type: ``boolean``
-- Default: ``False``
+- type: ``boolean``
+- default: ``False``
+- example: ``True``
 
 
 mailserver.backup.retain.daily
@@ -992,8 +1102,9 @@ mailserver.backup.retain.daily
 
 How many daily snapshots are retained.
 
-- Type: ``signed integer``
-- Default: ``7``
+- type: ``signed integer``
+- default: ``7``
+
 
 
 mailserver.backup.retain.hourly
@@ -1001,8 +1112,9 @@ mailserver.backup.retain.hourly
 
 How many hourly snapshots are retained.
 
-- Type: ``signed integer``
-- Default: ``24``
+- type: ``signed integer``
+- default: ``24``
+
 
 
 mailserver.backup.retain.weekly
@@ -1010,8 +1122,9 @@ mailserver.backup.retain.weekly
 
 How many weekly snapshots are retained.
 
-- Type: ``signed integer``
-- Default: ``54``
+- type: ``signed integer``
+- default: ``54``
+
 
 
 mailserver.backup.snapshotRoot
@@ -1020,8 +1133,9 @@ mailserver.backup.snapshotRoot
 The directory where rsnapshot stores the backup.
 
 
-- Type: ``path``
-- Default: ``/var/rsnapshot``
+- type: ``path``
+- default: ``/var/rsnapshot``
+
 
 mailserver.borg
 ~~~~~~~~~~~~~~~
@@ -1035,8 +1149,9 @@ This is called after borg create completed successfully and in the same script t
 cmdPreexec, borg init and create.
 
 
-- Type: ``null or string``
-- Default: ``None``
+- type: ``null or string``
+- default: ``None``
+
 
 
 mailserver.borgbackup.cmdPreexec
@@ -1048,8 +1163,9 @@ Example:
   export BORG_RSH="ssh -i /path/to/private/key"
 
 
-- Type: ``null or string``
-- Default: ``None``
+- type: ``null or string``
+- default: ``None``
+
 
 
 mailserver.borgbackup.compression.auto
@@ -1057,8 +1173,9 @@ mailserver.borgbackup.compression.auto
 
 Leaves it to borg to determine whether an individual file should be compressed.
 
-- Type: ``boolean``
-- Default: ``False``
+- type: ``boolean``
+- default: ``False``
+
 
 
 mailserver.borgbackup.compression.level
@@ -1069,8 +1186,9 @@ Most methods accept levels from 0 to 9 but zstd which accepts values from 1 to 2
 If null the decision is left up to borg.
 
 
-- Type: ``null or signed integer``
-- Default: ``None``
+- type: ``null or signed integer``
+- default: ``None``
+
 
 
 mailserver.borgbackup.compression.method
@@ -1078,8 +1196,9 @@ mailserver.borgbackup.compression.method
 
 Leaving this unset allows borg to choose. The default for borg 1.1.4 is lz4.
 
-- Type: ``null or one of "none", "lz4", "zstd", "zlib", "lzma"``
-- Default: ``None``
+- type: ``null or one of "none", "lz4", "zstd", "zlib", "lzma"``
+- default: ``None``
+
 
 
 mailserver.borgbackup.enable
@@ -1087,8 +1206,9 @@ mailserver.borgbackup.enable
 
 Whether to enable backup via borgbackup.
 
-- Type: ``boolean``
-- Default: ``False``
+- type: ``boolean``
+- default: ``False``
+- example: ``True``
 
 
 mailserver.borgbackup.encryption.method
@@ -1098,8 +1218,9 @@ The backup can be encrypted by choosing any other value than 'none'.
 When using encryption the password / passphrase must be provided in passphraseFile.
 
 
-- Type: ``one of "none", "authenticated", "authenticated-blake2", "repokey", "keyfile", "repokey-blake2", "keyfile-blake2"``
-- Default: ``none``
+- type: ``one of "none", "authenticated", "authenticated-blake2", "repokey", "keyfile", "repokey-blake2", "keyfile-blake2"``
+- default: ``none``
+
 
 
 mailserver.borgbackup.encryption.passphraseFile
@@ -1107,8 +1228,9 @@ mailserver.borgbackup.encryption.passphraseFile
 
 Path to a file containing the encryption password or passphrase.
 
-- Type: ``null or path``
-- Default: ``None``
+- type: ``null or path``
+- default: ``None``
+
 
 
 mailserver.borgbackup.extraArgumentsForCreate
@@ -1116,8 +1238,9 @@ mailserver.borgbackup.extraArgumentsForCreate
 
 Additional arguments to add to the borg create command line e.g. '--stats'.
 
-- Type: ``list of strings``
-- Default: ``[]``
+- type: ``list of strings``
+- default: ``[]``
+
 
 
 mailserver.borgbackup.extraArgumentsForInit
@@ -1125,8 +1248,9 @@ mailserver.borgbackup.extraArgumentsForInit
 
 Additional arguments to add to the borg init command line.
 
-- Type: ``list of strings``
-- Default: ``['--critical']``
+- type: ``list of strings``
+- default: ``['--critical']``
+
 
 
 mailserver.borgbackup.group
@@ -1134,8 +1258,9 @@ mailserver.borgbackup.group
 
 The group borg and its launch script is run as.
 
-- Type: ``string``
-- Default: ``virtualMail``
+- type: ``string``
+- default: ``virtualMail``
+
 
 
 mailserver.borgbackup.locations
@@ -1143,8 +1268,9 @@ mailserver.borgbackup.locations
 
 The locations that are to be backed up by borg.
 
-- Type: ``list of paths``
-- Default: ``['/var/vmail']``
+- type: ``list of paths``
+- default: ``['/var/vmail']``
+
 
 
 mailserver.borgbackup.name
@@ -1154,8 +1280,9 @@ The name of the individual backups as used by borg.
 Certain placeholders will be replaced by borg.
 
 
-- Type: ``string``
-- Default: ``{hostname}-{user}-{now}``
+- type: ``string``
+- default: ``{hostname}-{user}-{now}``
+
 
 
 mailserver.borgbackup.repoLocation
@@ -1166,8 +1293,9 @@ This can be a local path or a remote location such as user@host:/path/to/repo.
 It is exported and thus available as an environment variable to cmdPreexec and cmdPostexec.
 
 
-- Type: ``string``
-- Default: ``/var/borgbackup``
+- type: ``string``
+- default: ``/var/borgbackup``
+
 
 
 mailserver.borgbackup.startAt
@@ -1175,8 +1303,9 @@ mailserver.borgbackup.startAt
 
 When or how often the backup should run. Must be in the format described in systemd.time 7.
 
-- Type: ``string``
-- Default: ``hourly``
+- type: ``string``
+- default: ``hourly``
+
 
 
 mailserver.borgbackup.user
@@ -1184,6 +1313,7 @@ mailserver.borgbackup.user
 
 The user borg and its launch script is run as.
 
-- Type: ``string``
-- Default: ``virtualMail``
+- type: ``string``
+- default: ``virtualMail``
+
 

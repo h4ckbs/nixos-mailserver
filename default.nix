@@ -662,8 +662,11 @@ in
       email = mkOption {
         type = types.str;
         default = with cfg.dmarcReporting; "${localpart}@${domain}";
-        example = "dmarc-noreply@example.com";
+        defaultText = literalExpression ''"''${localpart}@''${domain}"'';
         readOnly = true;
+        description = ''
+          The email address used for outgoing DMARC reports. Read-only.
+        '';
       };
 
       organizationName = mkOption {
@@ -678,6 +681,7 @@ in
       fromName = mkOption {
         type = types.str;
         default = cfg.dmarcReporting.organizationName;
+        defaultText = literalExpression "organizationName";
         description = ''
           The sender name for DMARC reports. Defaults to the organization name.
         '';
