@@ -81,22 +81,6 @@
       python ${./scripts/generate-options.py} ${options} > $out
     '';
 
-    # This is a script helping users to generate this file in the docs directory
-    generateOptions = pkgs.writeShellScriptBin "generate-options" ''
-      install -vm644 ${optionsDoc} ./docs/options.md
-    '';
-
-    # This is to ensure we don't forget to update the options.md file
-    testOptions = pkgs.runCommand "test-options" {} ''
-      if ! diff -q ${./docs/options.md} ${optionsDoc}
-      then
-        echo "The file ./docs/options.md is not up-to-date and needs to be regenerated!"
-        echo "  hint: run 'nix-shell --run generate-options' to generate this file"
-        exit 1
-      fi
-      echo "test: ok" > $out
-    '';
-
     documentation = pkgs.stdenv.mkDerivation {
       name = "documentation";
       src = lib.sourceByRegex ./docs ["logo\\.png" "conf\\.py" "Makefile" ".*\\.rst"];
@@ -125,14 +109,15 @@
     };
     nixosModule = self.nixosModules.default; # compatibility
     hydraJobs.${system} = allTests // {
-      test-options = testOptions;
       inherit documentation;
     };
     checks.${system} = allTests;
+    packages.${system} = {
+      inherit optionsDoc documentation;
+    };
     devShells.${system}.default = pkgs.mkShell {
       inputsFrom = [ documentation ];
       packages = with pkgs; [
-        generateOptions
         clamav
       ];
     };
