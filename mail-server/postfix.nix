@@ -52,6 +52,17 @@ let
   # extra_valiases_postfix :: Map String [String]
   extra_valiases_postfix = attrsToLookupTable cfg.extraVirtualAliases;
 
+  # Like extra_valiases_postfix but removes the +suffix, if present. Used for allowing
+  # users to send emails using their aliases' MAILFROM
+  extra_valiases_postfix_send = lib.mapAttrs (name: value:
+      map (mail:
+        let
+          splitAt = lib.splitString "@" mail;
+          splitSuffix = lib.splitString cfg.recipientDelimiter (builtins.elemAt splitAt 0);
+        in "${builtins.elemAt splitSuffix 0}@${lib.last splitAt}")
+        value
+    ) extra_valiases_postfix;
+
   # forwards :: Map String [String]
   forwards = attrsToLookupTable cfg.forwards;
 
@@ -64,6 +75,9 @@ let
   valiases_file = let
     content = lookupTableToString (mergeLookupTables [all_valiases_postfix catchAllPostfix]);
   in builtins.toFile "valias" content;
+
+  # like valias, built using extra_valiases_postfix_send
+  valiases_send_file = builtins.toFile "valias_send" (lookupTableToString extra_valiases_postfix_send);
 
   # denied_recipients_postfix :: [ String ]
   denied_recipients_postfix = (map
@@ -133,7 +147,7 @@ let
       smtpd_sasl_security_options = "noanonymous";
       smtpd_sasl_local_domain = "$myhostname";
       smtpd_client_restrictions = "permit_sasl_authenticated,reject";
-      smtpd_sender_login_maps = "hash:/etc/postfix/vaccounts,${(mappedFile "valias")}${lib.optionalString cfg.ldap.enable ",ldap:${ldapSenderLoginMap}"}";
+      smtpd_sender_login_maps = "unionmap:{ hash:/etc/postfix/vaccounts,${(mappedFile "valias_send")}${lib.optionalString cfg.ldap.enable ",ldap:${ldapSenderLoginMap}"} }";
       smtpd_sender_restrictions = "reject_sender_login_mismatch";
       smtpd_recipient_restrictions = "reject_non_fqdn_recipient,reject_unknown_recipient_domain,permit_sasl_authenticated,reject";
       cleanup_service_name = "submission-header-cleanup";
@@ -176,6 +190,7 @@ in
       hostname = "${sendingFqdn}";
       networksStyle = "host";
       mapFiles."valias" = valiases_file;
+      mapFiles."valias_send" = valiases_send_file;
       mapFiles."vaccounts" = vaccounts_file;
       mapFiles."denied_recipients" = denied_recipients_file;
       mapFiles."reject_senders" = reject_senders_file;
