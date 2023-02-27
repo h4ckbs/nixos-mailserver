@@ -447,12 +447,15 @@ in
     };
 
     extraVirtualAliases = mkOption {
-      type = let
-        loginAccount = mkOptionType {
-          name = "Login Account";
-          check = (account: builtins.elem account (builtins.attrNames cfg.loginAccounts));
-        };
-      in with types; attrsOf (either loginAccount (nonEmptyListOf loginAccount));
+      # Since we define accounts in LDAP, we can't look them up in the loginAccounts table, so
+      # just define them as strings here.
+
+      # type = let
+      #   loginAccount = mkOptionType {
+      #     name = "Login Account";
+      #     check = (account: builtins.elem account (builtins.attrNames cfg.loginAccounts));
+      #   };
+      type = with types; attrsOf (either str (nonEmptyListOf str));
       example = {
         "info@example.com" = "user1@example.com";
         "postmaster@example.com" = "user1@example.com";
